@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
     res.json({ message: "Welcome to contact book application." });
 });
 
-app.use("/api/Rentals", RentalsRouter);
+app.use("/api/rentals", RentalsRouter);
 
 app.use((req, res, next) => {
     
