@@ -4,7 +4,7 @@ const docgias = require("../controllers/docgia.controller");
 const router = express.Router();
 
 /*
-  🔹 /api/docgias
+  /api/docgias
     GET    -> Lấy danh sách tất cả độc giả
     POST   -> Thêm độc giả mới
     DELETE -> Xóa toàn bộ độc giả
@@ -15,7 +15,7 @@ router.route("/")
   .delete(docgias.deleteAll);
 
 /*
-  🔹 /api/docgias/:id
+  /api/docgias/:id
     GET    -> Lấy thông tin 1 độc giả theo ID
     PUT    -> Cập nhật thông tin độc giả
     DELETE -> Xóa 1 độc giả theo ID

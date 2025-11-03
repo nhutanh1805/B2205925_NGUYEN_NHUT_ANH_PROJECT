@@ -4,7 +4,7 @@ const theodoimuonsach = require("../controllers/theodoimuonsach.controller");
 const router = express.Router();
 
 /*
-  🔹 /api/theodoimuonsach
+  /api/theodoimuonsach
     GET    -> Lấy tất cả phiếu mượn
     POST   -> Thêm phiếu mượn mới
     DELETE -> Xóa tất cả phiếu mượn
@@ -15,7 +15,7 @@ router.route("/")
   .delete(theodoimuonsach.deleteAll);
 
 /*
-  🔹 /api/theodoimuonsach/:id
+  /api/theodoimuonsach/:id
     GET    -> Lấy 1 phiếu mượn theo ID
     PUT    -> Cập nhật phiếu mượn
     DELETE -> Xóa phiếu mượn theo ID

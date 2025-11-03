@@ -4,7 +4,7 @@ const sachs = require("../controllers/sach.controller");
 const router = express.Router();
 
 /*
-  🔹 /api/sach
+  /api/sach
     GET    -> Lấy danh sách tất cả sách
     POST   -> Thêm sách mới
     DELETE -> Xóa toàn bộ sách
@@ -15,7 +15,7 @@ router.route("/")
   .delete(sachs.deleteAll);
 
 /*
-  🔹 /api/sach/:id
+  /api/sach/:id
     GET    -> Lấy thông tin 1 sách theo ID
     PUT    -> Cập nhật thông tin sách
     DELETE -> Xóa 1 sách theo ID
