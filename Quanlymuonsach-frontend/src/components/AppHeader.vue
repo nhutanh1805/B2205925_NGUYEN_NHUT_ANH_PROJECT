@@ -1,0 +1,41 @@
+<template>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">📚 Quản Lý Mượn Sách</a>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{name: 'sach.list'}">Sách</router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link class="nav-link" to="#">Độc Giả</router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link class="nav-link" to="#">Mượn Trả</router-link>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </nav>
+</template>
+
+<style scoped>
+.nav-link.router-link-active {
+  font-weight: bold;
+  border-bottom: 2px solid white;
+}
+</style>
