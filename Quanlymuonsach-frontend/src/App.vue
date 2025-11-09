@@ -1,7 +1,10 @@
 <template>
-  <AppHeader />
-  <div class="container app-container">
-    <router-view />
+  <div id="app">
+    <AppHeader />
+
+    <div class="container app-container">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -15,8 +18,15 @@ export default {
 </script>
 
 <style>
+body {
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+}
+
 .app-container {
   max-width: 1200px;
   margin-top: 24px;
+  padding-bottom: 40px;
 }
 </style>

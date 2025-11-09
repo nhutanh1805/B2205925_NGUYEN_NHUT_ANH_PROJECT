@@ -3,6 +3,8 @@ export default {
   props: {
     items: { type: Array, default: [] },
     activeIndex: { type: Number, default: -1 },
+
+    displayKey: { type: String, default: "TenSach" },
   },
   emits: ["update:activeIndex"],
   methods: {
@@ -22,7 +24,7 @@ export default {
       :class="{ active: index === activeIndex }"
       @click="updateActiveIndex(index)"
     >
-      {{ item.TenSach }}
+      {{ item[displayKey] }}
     </li>
   </ul>
 </template>

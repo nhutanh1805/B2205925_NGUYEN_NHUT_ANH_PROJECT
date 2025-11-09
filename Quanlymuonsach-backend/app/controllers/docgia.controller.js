@@ -4,8 +4,8 @@ const ApiError = require("../api-error");
 
 // thêm độc giả mới
 exports.create = async (req, res, next) => {
-  if (!req.body?.MaDocGia || !req.body?.HoTen) {
-    return next(new ApiError(400, "Mã độc giả và Họ tên không được để trống"));
+  if (!req.body?.MaDocGia || !req.body?.HoLot || !req.body?.Ten) {
+    return next(new ApiError(400, "Mã độc giả, Họ lót và Tên không được để trống"));
   }
 
   try {

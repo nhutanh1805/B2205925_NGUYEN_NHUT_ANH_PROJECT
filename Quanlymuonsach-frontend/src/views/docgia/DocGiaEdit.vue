@@ -1,13 +1,14 @@
 <template>
-  <div class="page d-flex justify-content-center" v-if="sach">
+  <div class="page d-flex justify-content-center" v-if="docgia">
     <div class="card shadow edit-card p-4">
+
       <h4 class="title mb-3 text-center">
-        <i class="fas fa-edit"></i> Chỉnh sửa sách
+        <i class="fas fa-user-edit"></i> Chỉnh sửa Độc Giả
       </h4>
 
-      <SachForm
-        :sach="sach"
-        @submit:sach="updateSach"
+      <DocGiaForm
+        :docgia="docgia"
+        @submit:docgia="updateDocGia"
       />
 
       <div class="d-flex justify-content-between mt-3">
@@ -15,7 +16,7 @@
           <i class="fas fa-arrow-left"></i> Thoát
         </button>
 
-        <button class="btn btn-danger btn-sm" @click="deleteSach">
+        <button class="btn btn-danger btn-sm" @click="deleteDocGia">
           <i class="fas fa-trash"></i> Xóa
         </button>
       </div>
@@ -26,45 +27,51 @@
 </template>
 
 <script>
-import SachForm from "@/components/SachForm.vue";
-import SachService from "@/services/sach.service";
+import DocGiaForm from "@/components/DocGiaForm.vue";
+import DocGiaService from "@/services/docgia.service";
 
 export default {
-  components: { SachForm },
+  components: { DocGiaForm },
   props: {
     id: { type: String, required: true },
   },
   data() {
     return {
-      sach: null,
+      docgia: null,
       message: "",
     };
   },
   methods: {
-    async loadSach() {
+    async loadDocGia() {
       try {
-        this.sach = await SachService.get(this.id);
+        this.docgia = await DocGiaService.get(this.id);
       } catch {
-        alert("Không tìm thấy sách.");
+        alert("Không tìm thấy độc giả.");
         this.goBack();
       }
     },
-    async updateSach(data) {
-      await SachService.update(this.sach._id, data);
+    async updateDocGia(data) {
+      const result = await DocGiaService.update(this.docgia._id, data);
+
+      if (result && result.message) {
+        alert(result.message);
+        return;
+      }
+
       this.message = "Cập nhật thành công.";
     },
-    async deleteSach() {
-      if (confirm("Bạn chắc chắn muốn xóa sách này?")) {
-        await SachService.delete(this.sach._id);
+    async deleteDocGia() {
+      if (confirm("Bạn chắc chắn muốn xóa độc giả này?")) {
+        await DocGiaService.delete(this.docgia._id);
         this.goBack();
       }
     },
     goBack() {
-      this.$router.push({ name: "sach.list" });
+      this.$router.push({ name: "docgia.list" });
     },
   },
   mounted() {
-    this.loadSach();
+    this.loadDocGia();
   },
 };
 </script>

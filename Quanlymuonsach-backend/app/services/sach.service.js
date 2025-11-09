@@ -6,15 +6,16 @@ class SachService {
   }
 
   extractSachData(payload) {
-    const sach = {
-      MaSach: payload.MaSach,            // Mã sách
-      TenSach: payload.TenSach,          // Tên sách
-      TacGia: payload.TacGia,            // Tác giả
-      NamXuatBan: payload.NamXuatBan,    // Năm xuất bản
-      NhaXuatBan: payload.NhaXuatBan,    // Nhà xuất bản
-      TheLoai: payload.TheLoai,          // Thể loại (tùy chọn)
-      SoLuong: payload.SoLuong,          // Số lượng tồn kho
-    };
+  const sach = {
+    MaSach: payload.MaSach,            // Mã sách
+    TenSach: payload.TenSach,          // Tên sách
+    TacGia: payload.TacGia,            // Tác giả
+    DonGia: payload.DonGia,            // Đơn giá
+    SoQuyen: payload.SoQuyen,          // Số lượng tồn kho
+    NamXuatBan: payload.NamXuatBan,    // Năm xuất bản
+    MaNXB: payload.MaNXB,              // Mã nhà xuất bản
+    TheLoai: payload.TheLoai,          // Thể loại
+  };
 
     Object.keys(sach).forEach(
       (key) => sach[key] === undefined && delete sach[key]

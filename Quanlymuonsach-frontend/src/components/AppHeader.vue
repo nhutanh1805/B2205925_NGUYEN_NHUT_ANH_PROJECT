@@ -6,8 +6,8 @@
       <button
         class="navbar-toggler"
         type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -16,15 +16,21 @@
         <ul class="navbar-nav ms-auto">
 
           <li class="nav-item">
-            <router-link class="nav-link" :to="{name: 'sach.list'}">Sách</router-link>
+            <router-link class="nav-link" :to="{ name: 'sach.list' }">
+              Sách
+            </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link" to="#">Độc Giả</router-link>
+            <router-link class="nav-link" :to="{ name: 'docgia.list' }">
+              Độc Giả
+            </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link" to="#">Mượn Trả</router-link>
+            <span class="nav-link disabled" style="opacity:0.6;cursor:not-allowed;">
+              Mượn Trả
+            </span>
           </li>
 
         </ul>

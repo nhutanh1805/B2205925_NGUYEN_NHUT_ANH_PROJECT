@@ -5,7 +5,7 @@
         <i class="fas fa-plus-circle"></i> Thêm Sách Mới
       </h4>
 
-      <SachForm :book="book" @submit:book="addBook" />
+      <SachForm :sach="sach" @submit:sach="addSach" />
 
       <p class="text-success text-center mt-2">{{ message }}</p>
     </div>
@@ -20,20 +20,21 @@ export default {
   components: { SachForm },
   data() {
     return {
-      book: {
+      sach: {
         MaSach: "",
         TenSach: "",
         TacGia: "",
+        DonGia: "",
+        SoQuyen: "",
         NamXuatBan: "",
-        NhaXuatBan: "",
+        MaNXB: "",
         TheLoai: "",
-        SoLuong: "",
       },
       message: "",
     };
   },
   methods: {
-    async addBook(data) {
+    async addSach(data) {
       await SachService.create(data);
       alert("Thêm sách thành công!");
       this.$router.push({ name: "sach.list" });

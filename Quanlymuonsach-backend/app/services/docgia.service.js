@@ -5,16 +5,15 @@ class DocGiaService {
     this.DocGia = client.db().collection("docgia"); 
   }
 
-  // chuẩn hóa dữ liệu độc giả
-  extractDocGiaData(payload) {
+ extractDocGiaData(payload) {
     const docGia = {
-      MaDocGia: payload.MaDocGia,   // Mã độc giả
-      HoTen: payload.HoTen,         // Họ tên
-      NgaySinh: payload.NgaySinh,   // Ngày sinh
-      GioiTinh: payload.GioiTinh,   // Giới tính
-      DiaChi: payload.DiaChi,       // Địa chỉ
-      SDT: payload.SDT,             // Số điện thoại
-      Email: payload.Email,         // Email
+      MaDocGia: payload.MaDocGia,
+      HoLot: payload.HoLot,
+      Ten: payload.Ten,
+      NgaySinh: payload.NgaySinh,
+      Phai: payload.Phai,
+      DiaChi: payload.DiaChi,
+      DienThoai: payload.DienThoai,
     };
 
     Object.keys(docGia).forEach(
