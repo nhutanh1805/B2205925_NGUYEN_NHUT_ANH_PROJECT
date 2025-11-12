@@ -1,15 +1,42 @@
 import { createWebHistory, createRouter } from "vue-router";
 
-// bảng sách
+// Trang chủ + Auth
+import Home from "@/views/Home.vue";
+import UserLogin from "@/views/auth/UserLogin.vue";
+import UserRegister from "@/views/auth/UserRegister.vue";
+
+// Bảng Sách
 import SachList from "@/views/sach/SachList.vue";
 
+// Bảng Độc giả
+// (sử dụng import lazy cho đồng bộ như bạn đang dùng)
+
 const routes = [
+  // Trang chủ
   {
     path: "/",
+    name: "home",
+    component: Home,
+  },
+
+  // Auth (Đăng nhập / Đăng ký)
+  {
+    path: "/login",
+    name: "login",
+    component: UserLogin,
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: UserRegister,
+  },
+
+  // Bảng Sách
+  {
+    path: "/sach",
     name: "sach.list",
     component: SachList,
   },
-
   {
     path: "/sach/add",
     name: "sach.add",
@@ -22,7 +49,7 @@ const routes = [
     props: true,
   },
 
-  // bảng độc giả
+  // Bảng Độc Giả
   {
     path: "/docgia",
     name: "docgia.list",
@@ -40,8 +67,7 @@ const routes = [
     props: true,
   },
 
- 
-  // 404
+  // 404 Not Found
   {
     path: "/:pathMatch(.*)*",
     name: "notfound",
