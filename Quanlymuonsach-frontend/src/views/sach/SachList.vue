@@ -1,50 +1,73 @@
 <template>
-  <div class="page row g-4">
-
-    <div class="col-lg-5">
-      <InputSearch v-model="searchText" @submit="refreshList" />
-
-      <div class="section-title">
-        Danh sách Sách <i class="fas fa-book"></i>
+  <div class="books-page py-5">
+    <div class="container">
+      <div class="hero-box text-center text-white py-4 mb-5 rounded-4 shadow">
+        <h2 class="fw-bold mb-2"><i class="fas fa-book-reader"></i> Quản lý thư viện thông minh</h2>
+        <p class="lead mb-0">Khám phá, quản lý và yêu lại những cuốn sách cũ – theo cách hiện đại nhất 📚</p>
       </div>
 
-      <ListView
-        v-if="filteredBooksCount > 0"
-        :items="filteredBooks"
-        v-model:activeIndex="activeIndex"
-      />
-      <p v-else>Không có sách nào.</p>
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="p-4 bg-white rounded-4 shadow-sm">
+            <InputSearch v-model="searchText" @submit="refreshList" />
+            <h4 class="section-title text-success mt-4">
+              <i class="fas fa-layer-group me-2"></i> Danh sách Sách
+            </h4>
+            <ListView
+              v-if="filteredBooksCount > 0"
+              :items="filteredBooks"
+              v-model:activeIndex="activeIndex"
+            />
+            <p v-else class="text-muted mt-3 text-center fst-italic">
+              <i class="fas fa-inbox me-1"></i> Không có sách nào.
+            </p>
+            <div class="d-flex flex-wrap gap-2 mt-4 justify-content-center">
+              <button class="btn btn-success btn-sm" @click="refreshList">
+                <i class="fas fa-sync-alt"></i> Làm mới
+              </button>
+              <button class="btn btn-primary btn-sm" @click="goToAddBook">
+                <i class="fas fa-plus-circle"></i> Thêm mới
+              </button>
+              <button class="btn btn-danger btn-sm" @click="removeAllBooks">
+                <i class="fas fa-trash-alt"></i> Xóa tất cả
+              </button>
+            </div>
+          </div>
+        </div>
 
-      <div class="d-flex gap-2 mt-3">
-        <button class="btn btn-primary btn-sm" @click="refreshList">
-          <i class="fas fa-redo"></i> Làm mới
-        </button>
+        <div class="col-lg-7" v-if="activeBook">
+          <div class="p-4 bg-white rounded-4 shadow-sm">
+            <h4 class="section-title text-success">
+              <i class="fas fa-book-open me-2"></i> Chi tiết Sách
+            </h4>
+            <div class="book-card p-3 border rounded-4 bg-light shadow-sm mb-3">
+              <DetailCard :item="activeBook" />
+              <div class="mt-3">
+                <span class="badge bg-success me-2"><i class="fas fa-tag"></i> {{ activeBook.TheLoai }}</span>
+                <span class="badge bg-secondary"><i class="fas fa-user-pen"></i> {{ activeBook.TacGia }}</span>
+              </div>
+            </div>
+            <div class="d-flex gap-2 mt-3 justify-content-center">
+              <router-link
+                class="btn btn-warning btn-sm"
+                :to="{ name: 'sach.edit', params: { id: activeBook._id }}"
+              >
+                <i class="fas fa-edit"></i> Chỉnh sửa
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <button class="btn btn-success btn-sm" @click="goToAddBook">
-          <i class="fas fa-plus"></i> Thêm mới
-        </button>
-
-        <button class="btn btn-danger btn-sm" @click="removeAllBooks">
-          <i class="fas fa-trash"></i> Xóa tất cả
-        </button>
+      <div class="text-center mt-5">
+        <router-link to="/" class="btn btn-outline-success px-4 py-2 shadow-sm">
+          <i class="fas fa-home me-2"></i> Quay về Trang chủ
+        </router-link>
+        <p class="text-muted mt-3 fst-italic">
+          “Một cuốn sách hay có thể thay đổi cả một tâm hồn.” ✨
+        </p>
       </div>
     </div>
-
-    <div class="col-lg-7" v-if="activeBook">
-      <div class="section-title">
-        Chi tiết Sách <i class="fas fa-book-open"></i>
-      </div>
-
-      <DetailCard :item="activeBook" />
-
-      <router-link
-        class="btn btn-warning btn-sm mt-3"
-        :to="{ name: 'sach.edit', params: { id: activeBook._id }}"
-      >
-        <i class="fas fa-edit"></i> Chỉnh sửa
-      </router-link>
-    </div>
-
   </div>
 </template>
 
@@ -63,13 +86,11 @@ export default {
       activeIndex: -1,
     };
   },
-
   watch: {
     searchText() {
       this.activeIndex = -1;
     },
   },
-
   computed: {
     bookStrings() {
       return this.books.map((b) => {
@@ -90,7 +111,6 @@ export default {
       return this.activeIndex < 0 ? null : this.filteredBooks[this.activeIndex];
     },
   },
-
   methods: {
     async retrieveBooks() {
       this.books = await SachService.getAll();
@@ -109,7 +129,6 @@ export default {
       }
     },
   },
-
   mounted() {
     this.refreshList();
   },
@@ -117,19 +136,35 @@ export default {
 </script>
 
 <style scoped>
-.page {
-  max-width: 950px;
-  margin: auto;
+.books-page {
+  font-family: "Poppins", sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #e6f9ec, #ffffff);
+}
+.hero-box {
+  background: linear-gradient(135deg, #22c55e, #15803d);
 }
 .section-title {
-  font-weight: 600;
-  font-size: 18px;
-  margin: 14px 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-weight: 700;
+  font-size: 20px;
+  border-left: 4px solid #16a34a;
+  padding-left: 10px;
+  margin-bottom: 16px;
 }
-.gap-2 > * {
-  margin-right: 6px;
+.btn {
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.book-card:hover {
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+  background: #f8fff9;
+}
+.container {
+  max-width: 1150px;
 }
 </style>
