@@ -6,13 +6,19 @@ const router = express.Router();
 /*
   /api/docgias
     GET    -> Lấy danh sách tất cả độc giả
-    POST   -> Thêm độc giả mới
+    POST   -> Đăng ký / thêm độc giả mới
     DELETE -> Xóa toàn bộ độc giả
 */
 router.route("/")
   .get(docgias.findAll)
   .post(docgias.create)
   .delete(docgias.deleteAll);
+
+/*
+  /api/docgias/login
+    POST   -> Đăng nhập độc giả
+*/
+router.post("/login", docgias.login);
 
 /*
   /api/docgias/:id

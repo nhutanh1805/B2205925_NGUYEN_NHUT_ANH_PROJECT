@@ -38,16 +38,40 @@
                 >Độc Giả</router-link
               >
             </li>
-            <li class="nav-item">
-              <router-link class="btn btn-light btn-sm ms-3" to="/login">
-                <i class="fas fa-sign-in-alt"></i> Đăng nhập
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="btn btn-warning btn-sm ms-2" to="/register">
-                <i class="fas fa-user-plus"></i> Đăng ký
-              </router-link>
-            </li>
+
+            <template v-if="!user">
+              <li class="nav-item">
+                <router-link class="btn btn-light btn-sm ms-3" to="/login">
+                  <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="btn btn-warning btn-sm ms-2" to="/register">
+                  <i class="fas fa-user-plus"></i> Đăng ký
+                </router-link>
+              </li>
+            </template>
+
+            <template v-else>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle fw-bold text-warning"
+                  href="/thongtincanhan"
+                  id="userDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  {{ user.HoLot }} {{ user.Ten }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <button class="dropdown-item text-danger" @click="logout">
+                      <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </button>
+                  </li>
+                </ul>
+              </li>
+            </template>
           </ul>
         </div>
       </div>
@@ -268,6 +292,7 @@ export default {
   name: "HomePage",
   data() {
     return {
+      user: null,
       stats: [
         {
           title: "Kho Sách",
@@ -308,6 +333,19 @@ export default {
         },
       ],
     };
+  },
+  created() {
+    const saved = localStorage.getItem("user");
+    if (saved) {
+      this.user = JSON.parse(saved);
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem("user");
+      this.user = null;
+      this.$router.push("/login");
+    },
   },
 };
 </script>

@@ -5,7 +5,7 @@ class DocGiaService {
     this.DocGia = client.db().collection("docgia"); 
   }
 
- extractDocGiaData(payload) {
+  extractDocGiaData(payload) {
     const docGia = {
       MaDocGia: payload.MaDocGia,
       HoLot: payload.HoLot,
@@ -14,6 +14,8 @@ class DocGiaService {
       Phai: payload.Phai,
       DiaChi: payload.DiaChi,
       DienThoai: payload.DienThoai,
+      Username: payload.Username,
+      Password: payload.Password,
     };
 
     Object.keys(docGia).forEach(
@@ -23,7 +25,6 @@ class DocGiaService {
     return docGia;
   }
 
-  // tạo độc giả mới
   async create(payload) {
     const docGia = this.extractDocGiaData(payload);
     const result = await this.DocGia.insertOne(docGia);
@@ -34,27 +35,23 @@ class DocGiaService {
     };
   }
 
-  // lấy danh sách độc giả
   async find(filter) {
     const cursor = await this.DocGia.find(filter);
     return await cursor.toArray();
   }
 
-  // tìm theo họ tên (HoTen)
   async findByName(HoTen) {
     return await this.find({
       HoTen: { $regex: new RegExp(HoTen), $options: "i" },
     });
   }
 
-  // tìm 1 độc giả theo ID
   async findById(id) {
     return await this.DocGia.findOne({
       _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
     });
   }
 
-  // cập nhật thông tin độc giả
   async update(id, payload) {
     const filter = {
       _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
@@ -70,7 +67,6 @@ class DocGiaService {
     return result.value;
   }
 
-  // xóa 1 độc giả
   async delete(id) {
     const result = await this.DocGia.findOneAndDelete({
       _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
@@ -78,10 +74,20 @@ class DocGiaService {
     return result.value;
   }
 
-  // xóa toàn bộ độc giả
   async deleteAll() {
     const result = await this.DocGia.deleteMany({});
     return result.deletedCount;
+  }
+
+  async findOneByUsername(username) {
+    return await this.DocGia.findOne({ Username: username });
+  }
+
+  async login(username, password) {
+    return await this.DocGia.findOne({
+      Username: username,
+      Password: password,
+    });
   }
 }
 

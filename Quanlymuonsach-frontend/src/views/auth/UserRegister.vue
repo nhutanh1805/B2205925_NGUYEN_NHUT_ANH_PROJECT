@@ -24,6 +24,7 @@
         <div class="mb-3">
           <input v-model="form.Password" type="password" class="form-control" placeholder="Mật khẩu" required />
         </div>
+
         <button class="btn btn-success w-100">
           <i class="fas fa-user-plus"></i> Đăng ký
         </button>
@@ -52,12 +53,11 @@ export default {
   methods: {
     async submit() {
       try {
-        // Tạo mã độc giả ngẫu nhiên dạng DGxxxx
         this.form.MaDocGia = "DG" + Math.floor(1000 + Math.random() * 9000);
 
         const response = await DocGiaService.create(this.form);
 
-        if (response?.message?.includes("không được để trống")) {
+        if (response?.message?.includes("tồn tại")) {
           alert(response.message);
           return;
         }

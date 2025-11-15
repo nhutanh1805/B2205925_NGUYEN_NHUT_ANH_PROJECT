@@ -2,7 +2,6 @@ const DocGiaService = require("../services/docgia.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 
-// thêm độc giả mới
 exports.create = async (req, res, next) => {
   if (!req.body?.MaDocGia || !req.body?.HoLot || !req.body?.Ten) {
     return next(new ApiError(400, "Mã độc giả, Họ lót và Tên không được để trống"));
@@ -10,9 +9,18 @@ exports.create = async (req, res, next) => {
 
   try {
     const docGiaService = new DocGiaService(MongoDB.client);
+
+    if (req.body.Username) {
+      const existed = await docGiaService.findOneByUsername(req.body.Username);
+      if (existed) {
+        return next(new ApiError(400, "Tên đăng nhập đã tồn tại"));
+      }
+    }
+
     const document = await docGiaService.create(req.body);
+
     return res.status(201).json({
-      message: "Thêm độc giả mới thành công",
+      message: "Đăng ký độc giả thành công",
       data: document,
     });
   } catch (error) {
@@ -20,7 +28,30 @@ exports.create = async (req, res, next) => {
   }
 };
 
-// lấy danh sách độc giả hoặc tìm theo tên (?HoTen=...)
+exports.login = async (req, res, next) => {
+  try {
+    const { Username, Password } = req.body;
+
+    if (!Username || !Password) {
+      return next(new ApiError(400, "Tên đăng nhập và mật khẩu không được để trống"));
+    }
+
+    const docGiaService = new DocGiaService(MongoDB.client);
+    const user = await docGiaService.login(Username, Password);
+
+    if (!user) {
+      return next(new ApiError(401, "Sai tên đăng nhập hoặc mật khẩu"));
+    }
+
+    return res.status(200).json({
+      message: "Đăng nhập thành công",
+      user,
+    });
+  } catch (error) {
+    return next(new ApiError(500, "Có lỗi khi đăng nhập"));
+  }
+};
+
 exports.findAll = async (req, res, next) => {
   let documents = [];
 
@@ -40,7 +71,6 @@ exports.findAll = async (req, res, next) => {
   }
 };
 
-// lấy thông tin 1 độc giả theo ID
 exports.findOne = async (req, res, next) => {
   try {
     const docGiaService = new DocGiaService(MongoDB.client);
@@ -52,13 +82,10 @@ exports.findOne = async (req, res, next) => {
 
     return res.status(200).json(document);
   } catch (error) {
-    return next(
-      new ApiError(500, `Lỗi khi truy xuất độc giả id=${req.params.id}`)
-    );
+    return next(new ApiError(500, `Lỗi khi truy xuất độc giả id=${req.params.id}`));
   }
 };
 
-// cập nhật thông tin độc giả
 exports.update = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
     return next(new ApiError(400, "Dữ liệu cập nhật không được để trống"));
@@ -74,13 +101,10 @@ exports.update = async (req, res, next) => {
 
     return res.status(200).json({ message: "Cập nhật độc giả thành công" });
   } catch (error) {
-    return next(
-      new ApiError(500, `Lỗi khi cập nhật độc giả id=${req.params.id}`)
-    );
+    return next(new ApiError(500, `Lỗi khi cập nhật độc giả id=${req.params.id}`));
   }
 };
 
-// zóa độc giả theo ID
 exports.delete = async (req, res, next) => {
   try {
     const docGiaService = new DocGiaService(MongoDB.client);
@@ -92,13 +116,10 @@ exports.delete = async (req, res, next) => {
 
     return res.status(200).json({ message: "Xóa độc giả thành công" });
   } catch (error) {
-    return next(
-      new ApiError(500, `Không thể xóa độc giả id=${req.params.id}`)
-    );
+    return next(new ApiError(500, `Không thể xóa độc giả id=${req.params.id}`));
   }
 };
 
-// xóa toàn bộ độc giả
 exports.deleteAll = async (_req, res, next) => {
   try {
     const docGiaService = new DocGiaService(MongoDB.client);
