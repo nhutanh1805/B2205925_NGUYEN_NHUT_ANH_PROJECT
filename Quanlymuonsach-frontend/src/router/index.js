@@ -90,6 +90,12 @@ const routes = [
   component: () => import("@/views/theodoimuonsach/MuonSachList.vue"),
 },
 
+{
+  path: "/muonsach/:id",
+  name: "muonsach.detail",
+  component: () => import("@/views/theodoimuonsach/MuonSachDetail.vue"),
+  props: true,
+},
 
   {
     path: "/:pathMatch(.*)*",
