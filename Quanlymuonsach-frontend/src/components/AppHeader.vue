@@ -25,6 +25,14 @@
               Sách
             </router-link>
           </li>
+
+          <!-- 🔥 Nút Phiếu Mượn thêm mới -->
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'phieumuon.list' }">
+              Phiếu mượn
+            </router-link>
+          </li>
+
         </ul>
       </div>
     </div>

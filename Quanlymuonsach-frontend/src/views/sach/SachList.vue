@@ -7,20 +7,24 @@
       </div>
 
       <div class="row g-4">
+        <!-- LEFT PANEL: LIST -->
         <div class="col-lg-5">
           <div class="p-4 bg-white rounded-4 shadow-sm">
             <InputSearch v-model="searchText" @submit="refreshList" />
             <h4 class="section-title text-success mt-4">
               <i class="fas fa-layer-group me-2"></i> Danh sách Sách
             </h4>
+
             <ListView
               v-if="filteredBooksCount > 0"
               :items="filteredBooks"
               v-model:activeIndex="activeIndex"
             />
+
             <p v-else class="text-muted mt-3 text-center fst-italic">
               <i class="fas fa-inbox me-1"></i> Không có sách nào.
             </p>
+
             <div class="d-flex flex-wrap gap-2 mt-4 justify-content-center">
               <button class="btn btn-success btn-sm" @click="refreshList">
                 <i class="fas fa-sync-alt"></i> Làm mới
@@ -40,6 +44,7 @@
             <h4 class="section-title text-success">
               <i class="fas fa-book-open me-2"></i> Chi tiết Sách
             </h4>
+
             <div class="book-card p-3 border rounded-4 bg-light shadow-sm mb-3">
               <DetailCard :item="activeBook" />
               <div class="mt-3">
@@ -47,6 +52,7 @@
                 <span class="badge bg-secondary"><i class="fas fa-user-pen"></i> {{ activeBook.TacGia }}</span>
               </div>
             </div>
+
             <div class="d-flex gap-2 mt-3 justify-content-center">
               <router-link
                 class="btn btn-warning btn-sm"
@@ -54,6 +60,10 @@
               >
                 <i class="fas fa-edit"></i> Chỉnh sửa
               </router-link>
+
+              <button class="btn btn-primary btn-sm" @click="muonSach(activeBook)">
+                <i class="fas fa-book-reader"></i> Mượn sách
+              </button>
             </div>
           </div>
         </div>
@@ -111,6 +121,7 @@ export default {
       return this.activeIndex < 0 ? null : this.filteredBooks[this.activeIndex];
     },
   },
+
   methods: {
     async retrieveBooks() {
       this.books = await SachService.getAll();
@@ -128,7 +139,53 @@ export default {
         this.refreshList();
       }
     },
+
+    async muonSach(sach) {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user) {
+        alert("Bạn cần đăng nhập trước!");
+        this.$router.push("/login");
+        return;
+      }
+
+      if (!confirm(`Bạn có chắc muốn mượn sách: "${sach.TenSach}" ?`)) return;
+
+      const MaPhieuMuon = "PM" + Math.floor(1000 + Math.random() * 9000);
+
+      const today = new Date();
+      const hanTra = new Date();
+      hanTra.setDate(today.getDate() + 14);
+
+      const data = {
+        MaPhieuMuon,
+        MaDocGia: user.MaDocGia,
+        TenDocGia: `${user.HoLot} ${user.Ten}`,
+        MaSach: sach.MaSach,
+        TenSach: sach.TenSach,
+        NgayMuon: today.toISOString().split("T")[0],
+        HanTra: hanTra.toISOString().split("T")[0],
+        TrangThai: false,
+        GhiChu: "Chưa trả",
+      };
+
+      try {
+        const res = await fetch("http://localhost:4000/api/theodoimuonsach", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) throw new Error("API lỗi");
+
+        alert("Mượn sách thành công!");
+      } catch (error) {
+        console.error(error);
+        alert("Không thể mượn sách! Vui lòng thử lại.");
+      }
+    },
   },
+
   mounted() {
     this.refreshList();
   },

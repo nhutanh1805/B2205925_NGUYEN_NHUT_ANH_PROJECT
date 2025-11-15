@@ -2,7 +2,6 @@ const TheodoimuonsachService = require("../services/theodoimuonsach.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 
-// 🟢 Tạo mới một phiếu theo dõi mượn sách
 exports.create = async (req, res, next) => {
   if (!req.body?.MaDocGia || !req.body?.MaSach) {
     return next(new ApiError(400, "MaDocGia và MaSach không được để trống"));
@@ -20,7 +19,6 @@ exports.create = async (req, res, next) => {
   }
 };
 
-// 🟢 Lấy danh sách tất cả phiếu mượn
 exports.findAll = async (req, res, next) => {
   try {
     const service = new TheodoimuonsachService(MongoDB.client);
@@ -31,7 +29,6 @@ exports.findAll = async (req, res, next) => {
   }
 };
 
-// 🟢 Lấy thông tin một phiếu mượn theo ID
 exports.findOne = async (req, res, next) => {
   try {
     const service = new TheodoimuonsachService(MongoDB.client);
@@ -47,7 +44,6 @@ exports.findOne = async (req, res, next) => {
   }
 };
 
-// 🟢 Cập nhật phiếu mượn
 exports.update = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
     return next(new ApiError(400, "Dữ liệu cập nhật không được để trống"));
@@ -70,7 +66,6 @@ exports.update = async (req, res, next) => {
   }
 };
 
-// 🟢 Xóa một phiếu mượn
 exports.delete = async (req, res, next) => {
   try {
     const service = new TheodoimuonsachService(MongoDB.client);
@@ -86,7 +81,6 @@ exports.delete = async (req, res, next) => {
   }
 };
 
-// 🟢 Xóa toàn bộ phiếu mượn
 exports.deleteAll = async (_req, res, next) => {
   try {
     const service = new TheodoimuonsachService(MongoDB.client);

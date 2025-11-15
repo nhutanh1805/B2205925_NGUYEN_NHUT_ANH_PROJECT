@@ -25,6 +25,11 @@
           <i class="fas fa-unlock-alt"></i> Đăng nhập
         </button>
       </form>
+
+      <!-- Link to register page -->
+      <div class="mt-3 text-center">
+        <p>Bạn chưa có tài khoản? <router-link to="/register" class="text-primary">Đăng ký ngay</router-link></p>
+      </div>
     </div>
   </div>
 </template>
@@ -48,7 +53,6 @@ export default {
           Password: this.Password,
         });
 
-        // Lưu user vào localStorage
         localStorage.setItem("user", JSON.stringify(result.user));
 
         alert("Đăng nhập thành công!");

@@ -47,6 +47,12 @@
             </router-link>
           </div>
 
+          <div class="text-center mt-3">
+            <button class="btn btn-danger px-4" @click="logout">
+              <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+            </button>
+          </div>
+
         </div>
 
       </div>
@@ -68,6 +74,12 @@ export default {
       alert("Please log in first!");
       this.$router.push("/login");
     }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem("user");
+      this.$router.push("/login");
+    },
   },
 };
 </script>

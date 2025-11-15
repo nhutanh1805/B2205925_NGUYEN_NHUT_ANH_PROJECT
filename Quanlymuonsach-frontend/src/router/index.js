@@ -26,12 +26,11 @@ const routes = [
     meta: { requiresGuest: true },
   },
 
-{
-  path: "/thongtincanhan",
-  name: "user.profile",
-  component: () => import("@/views/thongtincanhan/UserProfile.vue"),
-},
-
+  {
+    path: "/thongtincanhan",
+    name: "user.profile",
+    component: () => import("@/views/thongtincanhan/UserProfile.vue"),
+  },
 
   {
     path: "/sach",
@@ -66,6 +65,31 @@ const routes = [
     component: () => import("@/views/docgia/DocGiaEdit.vue"),
     props: true,
   },
+
+  {
+    path: "/muonsach",
+    name: "muonsach.list",
+    component: () => import("@/views/theodoimuonsach/MuonSachList.vue"),
+  },
+  {
+    path: "/muonsach/add/:MaSach",
+    name: "muonsach.add",
+    component: () => import("@/views/theodoimuonsach/MuonSachAdd.vue"),
+    props: true,
+  },
+  {
+    path: "/muonsach/:id",
+    name: "muonsach.detail",
+    component: () => import("@/views/theodoimuonsach/MuonSachDetail.vue"),
+    props: true,
+  },
+
+ {
+  path: "/phieumuon",
+  name: "phieumuon.list",
+  component: () => import("@/views/theodoimuonsach/MuonSachList.vue"),
+},
+
 
   {
     path: "/:pathMatch(.*)*",
