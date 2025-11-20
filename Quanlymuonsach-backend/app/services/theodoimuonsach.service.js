@@ -13,6 +13,7 @@ class TheodoimuonsachService {
       TenDocGia: payload.TenDocGia,     // Tên độc giả
       MaSach: payload.MaSach,           // Mã sách
       TenSach: payload.TenSach,         // Tên sách
+      SoLuong: payload.SoLuong,         // Số lượng mượn
       NgayMuon: payload.NgayMuon,       // Ngày mượn
       HanTra: payload.HanTra,           // Hạn trả
       NgayTra: payload.NgayTra,         // Ngày trả (nếu có)

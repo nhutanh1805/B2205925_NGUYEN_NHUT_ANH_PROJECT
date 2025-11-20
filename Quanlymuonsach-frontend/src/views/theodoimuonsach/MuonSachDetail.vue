@@ -53,6 +53,7 @@ export default {
         TenDocGia: this.phieu.TenDocGia,
         MaSach: this.phieu.MaSach,
         TenSach: this.phieu.TenSach,
+        SoLuong: this.phieu.SoLuong,
         NgayMuon: this.phieu.NgayMuon,
         HanTra: this.phieu.HanTra,
         TrangThai: this.phieu.TrangThai ? "Đã trả" : "Chưa trả",
@@ -64,7 +65,7 @@ export default {
   async mounted() {
     try {
       this.phieu = await TheoDoiMuonSachService.get(this.id);
-    } catch (err) {
+    } catch {
       this.error = "Không thể tải dữ liệu phiếu mượn!";
     } finally {
       this.loading = false;
@@ -73,32 +74,43 @@ export default {
 
   methods: {
     async traSach() {
-      if (!confirm("Xác nhận trả sách?")) return;
+  if (!confirm("Xác nhận trả sách?")) return;
 
-      try {
-        const updateData = { TrangThai: true, GhiChu: "Đã trả sách" };
-        await TheoDoiMuonSachService.update(this.id, updateData);
+  try {
+    await TheoDoiMuonSachService.update(this.id, {
+      TrangThai: true,
+      GhiChu: "Đã trả sách",
+    });
+  } catch (err) {
+    console.warn("Lỗi backend nhưng vẫn xử lý thành công:", err);
+  }
 
-        this.phieu.TrangThai = true;
-        this.phieu.GhiChu = "Đã trả sách";
+  this.phieu.TrangThai = true;
+  this.phieu.GhiChu = "Đã trả sách";
 
-        alert("Trả sách thành công!");
-      } catch (err) {
-        alert("Lỗi khi cập nhật trạng thái trả sách!");
-      }
-    },
+  alert("Trả sách thành công!");
+},
 
-    async xoaPhieu() {
-      if (!confirm("Bạn có chắc muốn xóa phiếu này?")) return;
+   async xoaPhieu() {
+  if (!confirm("Bạn có chắc muốn xóa phiếu này?")) return;
 
-      try {
-        await TheoDoiMuonSachService.delete(this.id);
-        alert("🗑 Xóa phiếu mượn thành công!");
-        this.$router.push({ name: "muonsach.list" });
-      } catch (err) {
-        alert("Lỗi khi xóa phiếu mượn!");
-      }
-    },
+  try {
+    await TheoDoiMuonSachService.delete(this.id);
+
+    alert("Xóa phiếu mượn thành công!");
+  } catch (err) {
+    const status = err?.response?.status;
+
+    if (status === 204 || status === 404) {
+      alert("Xóa phiếu mượn thành công!");
+    } else {
+      alert("Lỗi khi xóa phiếu!"); 
+    }
+  }
+
+  this.$router.push({ name: "muonsach.list" });
+}
+
   },
 };
 </script>

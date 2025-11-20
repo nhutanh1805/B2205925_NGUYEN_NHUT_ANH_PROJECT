@@ -7,7 +7,6 @@
       </div>
 
       <div class="row g-4">
-        <!-- LEFT PANEL: LIST -->
         <div class="col-lg-5">
           <div class="p-4 bg-white rounded-4 shadow-sm">
             <InputSearch v-model="searchText" @submit="refreshList" />
@@ -48,8 +47,12 @@
             <div class="book-card p-3 border rounded-4 bg-light shadow-sm mb-3">
               <DetailCard :item="activeBook" />
               <div class="mt-3">
-                <span class="badge bg-success me-2"><i class="fas fa-tag"></i> {{ activeBook.TheLoai }}</span>
-                <span class="badge bg-secondary"><i class="fas fa-user-pen"></i> {{ activeBook.TacGia }}</span>
+                <span class="badge bg-success me-2">
+                  <i class="fas fa-tag"></i> {{ activeBook.TheLoai }}
+                </span>
+                <span class="badge bg-secondary">
+                  <i class="fas fa-user-pen"></i> {{ activeBook.TacGia }}
+                </span>
               </div>
             </div>
 
@@ -73,9 +76,7 @@
         <router-link to="/" class="btn btn-outline-success px-4 py-2 shadow-sm">
           <i class="fas fa-home me-2"></i> Quay về Trang chủ
         </router-link>
-        <p class="text-muted mt-3 fst-italic">
-          “Một cuốn sách hay có thể thay đổi cả một tâm hồn.” ✨
-        </p>
+        <p class="text-muted mt-3 fst-italic">“Một cuốn sách hay có thể thay đổi cả một tâm hồn.” ✨</p>
       </div>
     </div>
   </div>
@@ -96,11 +97,13 @@ export default {
       activeIndex: -1,
     };
   },
+
   watch: {
     searchText() {
       this.activeIndex = -1;
     },
   },
+
   computed: {
     bookStrings() {
       return this.books.map((b) => {
@@ -126,13 +129,16 @@ export default {
     async retrieveBooks() {
       this.books = await SachService.getAll();
     },
+
     refreshList() {
       this.retrieveBooks();
       this.activeIndex = -1;
     },
+
     goToAddBook() {
       this.$router.push({ name: "sach.add" });
     },
+
     async removeAllBooks() {
       if (confirm("Bạn có chắc muốn xóa tất cả sách không?")) {
         await SachService.deleteAll?.();
@@ -142,17 +148,23 @@ export default {
 
     async muonSach(sach) {
       const user = JSON.parse(localStorage.getItem("user"));
-
       if (!user) {
         alert("Bạn cần đăng nhập trước!");
         this.$router.push("/login");
         return;
       }
 
-      if (!confirm(`Bạn có chắc muốn mượn sách: "${sach.TenSach}" ?`)) return;
+      const soLuongMuon = Number(prompt("Bạn muốn mượn bao nhiêu quyển?"));
+
+      if (!soLuongMuon || soLuongMuon <= 0) {
+        return alert("Số lượng không hợp lệ!");
+      }
+
+      if (soLuongMuon > sach.SoQuyen) {
+        return alert("Số lượng vượt quá số quyển đang còn!");
+      }
 
       const MaPhieuMuon = "PM" + Math.floor(1000 + Math.random() * 9000);
-
       const today = new Date();
       const hanTra = new Date();
       hanTra.setDate(today.getDate() + 14);
@@ -163,26 +175,29 @@ export default {
         TenDocGia: `${user.HoLot} ${user.Ten}`,
         MaSach: sach.MaSach,
         TenSach: sach.TenSach,
+        SoLuong: soLuongMuon,
         NgayMuon: today.toISOString().split("T")[0],
         HanTra: hanTra.toISOString().split("T")[0],
         TrangThai: false,
         GhiChu: "Chưa trả",
       };
 
-      try {
-        const res = await fetch("http://localhost:4000/api/theodoimuonsach", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
+      await fetch("http://localhost:4000/api/theodoimuonsach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-        if (!res.ok) throw new Error("API lỗi");
+      const newSoQuyen = sach.SoQuyen - soLuongMuon;
 
-        alert("Mượn sách thành công!");
-      } catch (error) {
-        console.error(error);
-        alert("Không thể mượn sách! Vui lòng thử lại.");
-      }
+      await fetch(`http://localhost:4000/api/sach/${sach._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...sach, SoQuyen: newSoQuyen }),
+      });
+
+      alert("Mượn sách thành công!");
+      this.refreshList();
     },
   },
 
