@@ -2,14 +2,17 @@
   <div class="container py-4">
     <div class="text-center mb-4">
       <h3 class="fw-bold text-success">
-        <i class="fas fa-book-reader me-2"></i> Danh sách phiếu mượn sách
+        <i class="fas fa-book-reader me-2"></i> Phiếu mượn của bạn
       </h3>
-      <p class="text-muted">Quản lý toàn bộ phiếu mượn của độc giả</p>
+      <p class="text-muted">Xem và quản lý phiếu mượn của bạn</p>
     </div>
 
-    <div class="card shadow-lg border-0 rounded-4">
-      <div class="card-body p-0">
+    <div v-if="!user" class="alert alert-warning text-center">
+      Vui lòng <router-link to="/login">đăng nhập</router-link> để xem phiếu mượn.
+    </div>
 
+    <div v-else class="card shadow-lg border-0 rounded-4">
+      <div class="card-body p-0">
         <table class="table table-hover align-middle mb-0">
           <thead class="bg-light">
             <tr>
@@ -34,9 +37,7 @@
                   class="badge px-3 py-2 rounded-pill"
                   :class="p.TrangThai ? 'bg-success' : 'bg-warning text-dark'"
                 >
-                  <i 
-                    :class="p.TrangThai ? 'fas fa-check-circle me-1' : 'fas fa-clock me-1'"
-                  ></i>
+                  <i :class="p.TrangThai ? 'fas fa-check-circle me-1' : 'fas fa-clock me-1'"></i>
                   {{ p.TrangThai ? "Đã trả" : "Chưa trả" }}
                 </span>
               </td>
@@ -55,34 +56,26 @@
           <tfoot>
             <tr class="bg-light">
               <th colspan="6" class="text-center py-3">
-                
                 <div class="d-flex justify-content-center gap-4">
-
                   <span class="fw-bold text-primary">
                     <i class="fas fa-list me-1"></i>
                     Tổng số phiếu: {{ phieuMuon.length }}
                   </span>
-
                   <span class="fw-bold text-success">
                     <i class="fas fa-check-circle me-1"></i>
                     Đã trả: {{ daTra }}
                   </span>
-
                   <span class="fw-bold text-warning">
                     <i class="fas fa-clock me-1"></i>
                     Chưa trả: {{ chuaTra }}
                   </span>
-
                 </div>
-
               </th>
             </tr>
           </tfoot>
-
         </table>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -92,6 +85,7 @@ import TheoDoiMuonSachService from "@/services/theodoimuonsach.service";
 export default {
   data() {
     return {
+      user: null,
       phieuMuon: [],
     };
   },
@@ -106,7 +100,11 @@ export default {
   },
 
   async mounted() {
-    this.phieuMuon = await TheoDoiMuonSachService.getAll();
+    const saved = localStorage.getItem("user");
+    if (saved) {
+      this.user = JSON.parse(saved);
+      this.phieuMuon = await TheoDoiMuonSachService.getByUser(this.user.MaDocGia);
+    }
   },
 };
 </script>

@@ -93,3 +93,15 @@ exports.deleteAll = async (_req, res, next) => {
     return next(new ApiError(500, "Lỗi khi xóa tất cả phiếu mượn"));
   }
 };
+
+exports.findByUser = async (req, res, next) => {
+  try {
+    const service = new TheodoimuonsachService(MongoDB.client);
+    const MaDocGia = req.params.MaDocGia; 
+    const documents = await service.find({ MaDocGia }); 
+    return res.status(200).json(documents);
+  } catch (error) {
+    console.error(error);
+    return next(new ApiError(500, "Lỗi khi lấy phiếu mượn của người dùng"));
+  }
+};

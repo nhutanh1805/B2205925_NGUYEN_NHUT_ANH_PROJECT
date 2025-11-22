@@ -26,20 +26,18 @@ const routes = [
     meta: { requiresGuest: true },
   },
 
-{
-  path: "/nhanvien/login",
-  name: "nhanvien.login",
-  component: () => import("@/views/auth/NhanVienLogin.vue"),
-  meta: { requiresGuest: true },
-},
-
-{
-  path: "/nhanvien/register",
-  name: "nhanvien.register",
-  component: () => import("@/views/auth/NhanVienRegister.vue"),
-  meta: { requiresGuest: true },
-},
-
+  {
+    path: "/nhanvien/login",
+    name: "nhanvien.login",
+    component: () => import("@/views/auth/NhanVienLogin.vue"),
+    meta: { requiresGuest: true },
+  },
+  {
+    path: "/nhanvien/register",
+    name: "nhanvien.register",
+    component: () => import("@/views/auth/NhanVienRegister.vue"),
+    meta: { requiresGuest: true },
+  },
 
   {
     path: "/thongtincanhan",
@@ -99,12 +97,11 @@ const routes = [
     props: true,
   },
 
- {
-  path: "/phieumuon",
-  name: "phieumuon.list",
-  component: () => import("@/views/theodoimuonsach/MuonSachList.vue"),
-},
-
+  {
+    path: "/phieumuon",
+    name: "phieumuon.list",
+    component: () => import("@/views/theodoimuonsach/MuonSachList.vue"),
+  },
 
   {
     path: "/:pathMatch(.*)*",
@@ -116,6 +113,14 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (to.meta.requiresGuest && user) {
+    return next({ name: "home" });
+  }
+  next();
 });
 
 export default router;

@@ -5,24 +5,29 @@ class TheoDoiMuonSachService {
     this.api = createApiClient(baseUrl);
   }
 
-  async getAll() {
-    return (await this.api.get("/")).data;
+  getAll() {
+    return this.api.get("/").then(res => res.data);
   }
 
-  async get(id) {
-    return (await this.api.get(`/${id}`)).data;
+  get(id) {
+    return this.api.get(`/${id}`).then(res => res.data);
   }
 
-  async create(data) {
-    return (await this.api.post("/", data)).data;
+  create(data) {
+    return this.api.post("/", data).then(res => res.data);
   }
 
-  async update(id, data) {
-    return (await this.api.put(`/${id}`, data)).data;
+  update(id, data) {
+    return this.api.put(`/${id}`, data).then(res => res.data);
   }
 
-  async delete(id) {
-    return (await this.api.delete(`/${id}`)).data;
+  delete(id) {
+    return this.api.delete(`/${id}`).then(res => res.data);
+  }
+
+  // lấy phiếu mượn của 1 user
+  getByUser(MaDocGia) {
+    return this.api.get(`/user/${MaDocGia}`).then(res => res.data);
   }
 }
 
