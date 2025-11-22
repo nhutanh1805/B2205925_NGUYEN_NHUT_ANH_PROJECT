@@ -14,22 +14,31 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
+
+          <!-- Trang chủ -->
           <li class="nav-item">
-            <router-link class="nav-link" to="/">
-              Trang chủ
+            <router-link class="nav-link" to="/">Trang chủ</router-link>
+          </li>
+
+          <!-- Sách -->
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'sach.list' }">Sách</router-link>
+          </li>
+
+          <!-- Phiếu mượn -->
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'phieumuon.list' }">Phiếu mượn</router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'nhanvien.register' }">
+              Đăng ký nhân viên
             </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'sach.list' }">
-              Sách
-            </router-link>
-          </li>
-
-          <!-- 🔥 Nút Phiếu Mượn thêm mới -->
-          <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'phieumuon.list' }">
-              Phiếu mượn
+            <router-link class="nav-link" :to="{ name: 'nhanvien.login' }">
+              Đăng nhập nhân viên
             </router-link>
           </li>
 

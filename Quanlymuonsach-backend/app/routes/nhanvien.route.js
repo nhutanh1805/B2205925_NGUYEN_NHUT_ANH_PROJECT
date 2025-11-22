@@ -1,28 +1,13 @@
 const express = require("express");
+const router = express.Router();
 const nhanvien = require("../controllers/nhanvien.controller");
 
-const router = express.Router();
-
-/*
-  /api/nhanvien
-    GET    -> Lấy danh sách tất cả nhân viên
-    POST   -> Thêm nhân viên mới
-    DELETE -> Xóa toàn bộ nhân viên
-*/
-router.route("/")
-  .get(nhanvien.findAll)
-  .post(nhanvien.create)
-  .delete(nhanvien.deleteAll);
-
-/*
-  /api/nhanvien/:id
-    GET    -> Lấy thông tin 1 nhân viên theo ID
-    PUT    -> Cập nhật thông tin nhân viên
-    DELETE -> Xóa 1 nhân viên theo ID
-*/
-router.route("/:id")
-  .get(nhanvien.findOne)
-  .put(nhanvien.update)
-  .delete(nhanvien.delete);
+router.post("/", nhanvien.create);
+router.get("/", nhanvien.findAll);
+router.get("/:id", nhanvien.findOne);
+router.put("/:id", nhanvien.update);
+router.delete("/:id", nhanvien.delete);
+router.delete("/", nhanvien.deleteAll);
+router.post("/login", nhanvien.login);
 
 module.exports = router;

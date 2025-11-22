@@ -39,29 +39,26 @@
               >
             </li>
 
+             <!-- Nếu chưa đăng nhập -->
             <template v-if="!user">
               <li class="nav-item">
-                <router-link class="btn btn-light btn-sm ms-3" to="/login">
-                  <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                <router-link class="btn btn-light btn-sm ms-3" to="/nhanvien/login">
+                  <i class="fas fa-sign-in-alt"></i> Đăng nhập nhân viên
                 </router-link>
               </li>
               <li class="nav-item">
-                <router-link class="btn btn-warning btn-sm ms-2" to="/register">
-                  <i class="fas fa-user-plus"></i> Đăng ký
+                <router-link class="btn btn-warning btn-sm ms-2" to="/nhanvien/register">
+                  <i class="fas fa-user-plus"></i> Đăng ký nhân viên
                 </router-link>
               </li>
             </template>
 
+            <!-- Nếu đã đăng nhập -->
             <template v-else>
               <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle fw-bold text-warning"
-                  href="/thongtincanhan"
-                  id="userDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                >
-                  {{ user.HoLot }} {{ user.Ten }}
+                <a class="nav-link dropdown-toggle fw-bold text-warning" href="#" id="userDropdown"
+                  role="button" data-bs-toggle="dropdown">
+                  Admin
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>

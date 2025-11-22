@@ -2,45 +2,51 @@ const NhanVienService = require("../services/nhanvien.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 
-// thêm nhân viên mới
 exports.create = async (req, res, next) => {
-  if (!req.body?.MaNV || !req.body?.TenNV) {
-    return next(new ApiError(400, "Mã nhân viên và Tên nhân viên không được để trống"));
+  if (!req.body?.MSNV || !req.body?.HoTenNV) {
+    return next(new ApiError(400, "MSNV và Họ tên nhân viên không được để trống"));
   }
 
   try {
     const nhanVienService = new NhanVienService(MongoDB.client);
+
+    const existed = await nhanVienService.findOneByMSNV(req.body.MSNV);
+    if (existed) {
+      return res.status(400).json({ message: "MSNV đã tồn tại" });
+    }
+
     const document = await nhanVienService.create(req.body);
+
     return res.status(201).json({
       message: "Thêm nhân viên mới thành công",
       data: document,
     });
   } catch (error) {
+    console.error("Lỗi tạo nhân viên:", error);
     return next(new ApiError(500, "Đã xảy ra lỗi khi thêm nhân viên"));
   }
 };
 
-// lấy danh sách nhân viên
 exports.findAll = async (req, res, next) => {
-  let documents = [];
-
   try {
     const nhanVienService = new NhanVienService(MongoDB.client);
-    const { TenNV } = req.query;
+    const { HoTenNV } = req.query;
 
-    if (TenNV) {
-      documents = await nhanVienService.findByName(TenNV);
+    let documents = [];
+
+    if (HoTenNV) {
+      documents = await nhanVienService.findByName(HoTenNV);
     } else {
       documents = await nhanVienService.find({});
     }
 
     return res.status(200).json(documents);
   } catch (error) {
+    console.error(error);
     return next(new ApiError(500, "Lỗi khi truy xuất danh sách nhân viên"));
   }
 };
 
-// lấy 1 nhân viên theo ID
 exports.findOne = async (req, res, next) => {
   try {
     const nhanVienService = new NhanVienService(MongoDB.client);
@@ -52,11 +58,11 @@ exports.findOne = async (req, res, next) => {
 
     return res.status(200).json(document);
   } catch (error) {
+    console.error(error);
     return next(new ApiError(500, `Lỗi khi truy xuất nhân viên id=${req.params.id}`));
   }
 };
 
-// cập nhật nhân viên
 exports.update = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
     return next(new ApiError(400, "Dữ liệu cập nhật không được để trống"));
@@ -72,11 +78,11 @@ exports.update = async (req, res, next) => {
 
     return res.status(200).json({ message: "Cập nhật nhân viên thành công" });
   } catch (error) {
+    console.error(error);
     return next(new ApiError(500, `Lỗi khi cập nhật nhân viên id=${req.params.id}`));
   }
 };
 
-// xóa nhân viên theo ID
 exports.delete = async (req, res, next) => {
   try {
     const nhanVienService = new NhanVienService(MongoDB.client);
@@ -88,11 +94,11 @@ exports.delete = async (req, res, next) => {
 
     return res.status(200).json({ message: "Xóa nhân viên thành công" });
   } catch (error) {
+    console.error(error);
     return next(new ApiError(500, `Không thể xóa nhân viên id=${req.params.id}`));
   }
 };
 
-// xóa toàn bộ nhân viên
 exports.deleteAll = async (_req, res, next) => {
   try {
     const nhanVienService = new NhanVienService(MongoDB.client);
@@ -102,6 +108,44 @@ exports.deleteAll = async (_req, res, next) => {
       message: `${deletedCount} nhân viên đã được xóa thành công`,
     });
   } catch (error) {
+    console.error(error);
     return next(new ApiError(500, "Đã xảy ra lỗi khi xóa tất cả nhân viên"));
+  }
+};
+
+exports.login = async (req, res, next) => {
+  const { MSNV, Password } = req.body;
+
+  if (!MSNV || !Password) {
+    return next(new ApiError(400, "MSNV và mật khẩu không được để trống"));
+  }
+
+  try {
+    const nhanVienService = new NhanVienService(MongoDB.client);
+
+    const user = await nhanVienService.findOneByMSNV(MSNV);
+
+    if (!user) {
+      return res.status(400).json({ message: "Tài khoản không tồn tại" });
+    }
+
+    if (user.Password !== Password) {
+      return res.status(400).json({ message: "Mật khẩu không chính xác" });
+    }
+
+    return res.status(200).json({
+      message: "Đăng nhập thành công",
+      user: {
+        _id: user._id,
+        MSNV: user.MSNV,
+        HoTenNV: user.HoTenNV,
+        ChucVu: user.ChucVu,
+        DiaChi: user.DiaChi,
+        SoDienThoai: user.SoDienThoai,
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi login nhân viên:", error);
+    return next(new ApiError(500, "Lỗi khi đăng nhập nhân viên"));
   }
 };
