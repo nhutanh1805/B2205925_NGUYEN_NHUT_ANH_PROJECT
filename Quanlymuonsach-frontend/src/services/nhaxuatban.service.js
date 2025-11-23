@@ -1,8 +1,7 @@
 import createApiClient from "./api.service";
-import NhaXuatBanService from "./nhaxuatban.service";
 
-class SachService {
-  constructor(baseUrl = "/api/sach") {
+class NhaXuatBanService {
+  constructor(baseUrl = "/api/nhaxuatban") {
     this.api = createApiClient(baseUrl);
   }
 
@@ -12,10 +11,6 @@ class SachService {
 
   async create(data) {
     return (await this.api.post("/", data)).data;
-  }
-
-  async deleteAll() {
-    return (await this.api.delete("/")).data;
   }
 
   async get(id) {
@@ -30,9 +25,14 @@ class SachService {
     return (await this.api.delete(`/${id}`)).data;
   }
 
-  async getNXBList() {
-    return await NhaXuatBanService.getDropdown();
+  async deleteAll() {
+    return (await this.api.delete("/")).data;
+  }
+
+  async getDropdown() {
+    const list = await this.getAll();
+    return list.map(nxb => ({ MaNXB: nxb.MaNXB, TenNXB: nxb.TenNXB }));
   }
 }
 
-export default new SachService();
+export default new NhaXuatBanService();

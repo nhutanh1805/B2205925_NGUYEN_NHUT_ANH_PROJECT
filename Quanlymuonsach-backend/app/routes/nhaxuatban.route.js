@@ -25,4 +25,10 @@ router.route("/:id")
   .put(nhaxuatbans.update)
   .delete(nhaxuatbans.delete);
 
+/*
+  /api/nhaxuatban/list
+    GET -> Lấy danh sách nhà xuất bản dạng dropdown (MaNXB, TenNXB)
+*/
+router.get("/list", nhaxuatbans.getNXBList);
+
 module.exports = router;

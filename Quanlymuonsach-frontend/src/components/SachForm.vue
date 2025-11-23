@@ -32,8 +32,13 @@
     </div>
 
     <div class="form-group mb-3">
-      <label>Mã nhà xuất bản</label>
-      <input type="text" v-model="local.MaNXB" class="form-control">
+      <label>Nhà xuất bản</label>
+      <select v-model="local.MaNXB" class="form-control">
+        <option value="">-- Chọn NXB --</option>
+        <option v-for="nxb in nxbList" :key="nxb.MaNXB" :value="nxb.MaNXB">
+          {{ nxb.TenNXB }}
+        </option>
+      </select>
     </div>
 
     <div class="form-group mb-3">
@@ -51,11 +56,18 @@
 <script>
 export default {
   name: "SachForm",
-  props: { sach: { type: Object, default: () => ({}) } },
-  data() { return { local: { ...this.sach } }; },
+  props: { 
+    sach: { type: Object, default: () => ({}) },
+    nxbList: { type: Array, default: () => [] } // danh sách NXB từ parent
+  },
+  data() { 
+    return { local: { ...this.sach } }; 
+  },
   emits: ["submit:sach"],
   methods: {
-    submit() { this.$emit("submit:sach", { ...this.local }); }
+    submit() { 
+      this.$emit("submit:sach", { ...this.local }); 
+    }
   }
 };
 </script>

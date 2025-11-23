@@ -5,7 +5,11 @@
         <i class="fas fa-plus-circle"></i> Thêm Sách Mới
       </h4>
 
-      <SachForm :sach="sach" @submit:sach="addSach" />
+      <SachForm 
+        :sach="sach" 
+        :nxbList="nxbList" 
+        @submit:sach="addSach" 
+      />
 
       <p class="text-success text-center mt-2">{{ message }}</p>
     </div>
@@ -15,6 +19,7 @@
 <script>
 import SachForm from "@/components/SachForm.vue";
 import SachService from "@/services/sach.service";
+import NhaXuatBanService from "@/services/nhaxuatban.service";
 
 export default {
   components: { SachForm },
@@ -30,14 +35,27 @@ export default {
         MaNXB: "",
         TheLoai: "",
       },
+      nxbList: [],
       message: "",
     };
   },
+  async created() {
+    try {
+      this.nxbList = await NhaXuatBanService.getDropdown();
+    } catch (error) {
+      console.error("Lỗi load danh sách NXB", error);
+    }
+  },
   methods: {
     async addSach(data) {
-      await SachService.create(data);
-      alert("Thêm sách thành công!");
-      this.$router.push({ name: "sach.list" });
+      try {
+        await SachService.create(data);
+        alert("Thêm sách thành công!");
+        this.$router.push({ name: "sach.list" });
+      } catch (error) {
+        alert("Có lỗi xảy ra khi thêm sách.");
+        console.error(error);
+      }
     },
   },
 };
