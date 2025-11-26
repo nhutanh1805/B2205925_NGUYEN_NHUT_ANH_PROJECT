@@ -39,26 +39,35 @@
               >
             </li>
 
-             <!-- Nếu chưa đăng nhập -->
-            <template v-if="!user">
+            <template v-if="!nhanvien">
               <li class="nav-item">
-                <router-link class="btn btn-light btn-sm ms-3" to="/nhanvien/login">
-                  <i class="fas fa-sign-in-alt"></i> Đăng nhập nhân viên
+                <router-link
+                  class="btn btn-light btn-sm ms-3"
+                  to="nhanvien/login"
+                >
+                  <i class="fas fa-sign-in-alt"></i> Đăng nhập
                 </router-link>
               </li>
               <li class="nav-item">
-                <router-link class="btn btn-warning btn-sm ms-2" to="/nhanvien/register">
-                  <i class="fas fa-user-plus"></i> Đăng ký nhân viên
+                <router-link
+                  class="btn btn-warning btn-sm ms-2"
+                  to="nhanvien/register"
+                >
+                  <i class="fas fa-user-plus"></i> Đăng ký
                 </router-link>
               </li>
             </template>
 
-            <!-- Nếu đã đăng nhập -->
             <template v-else>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle fw-bold text-warning" href="#" id="userDropdown"
-                  role="button" data-bs-toggle="dropdown">
-                  Admin
+                <a
+                  class="nav-link dropdown-toggle fw-bold text-warning"
+                  href="/nhanvien/profile"
+                  id="userDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  {{ displayName }}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
@@ -289,7 +298,7 @@ export default {
   name: "HomePage",
   data() {
     return {
-      user: null,
+      nhanvien: null, // đổi từ user sang nhanvien
       stats: [
         {
           title: "Kho Sách",
@@ -332,99 +341,26 @@ export default {
     };
   },
   created() {
-    const saved = localStorage.getItem("user");
+    const saved = localStorage.getItem("nhanvien"); // lấy nhân viên
     if (saved) {
-      this.user = JSON.parse(saved);
+      this.nhanvien = JSON.parse(saved);
     }
   },
   methods: {
     logout() {
-      localStorage.removeItem("user");
-      this.user = null;
-      this.$router.push("/login");
+      localStorage.removeItem("nhanvien"); // xóa nhân viên
+      this.nhanvien = null;
+      this.$router.push("/nhanvien/login"); // redirect login nhân viên
+    },
+  },
+  computed: {
+    displayName() {
+      if (!this.nhanvien) return "";
+      return (
+        this.nhanvien.HoTen ||
+        `${this.nhanvien.HoLot || ""} ${this.nhanvien.Ten || ""}`.trim()
+      );
     },
   },
 };
 </script>
-
-<style scoped>
-.home-page {
-  font-family: "Poppins", sans-serif;
-  overflow-x: hidden;
-}
-
-.navbar .nav-link.router-link-active {
-  font-weight: bold;
-  border-bottom: 2px solid white;
-}
-
-.hero {
-  background: linear-gradient(120deg, #22c55e, #16a34a);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-top: 80px;
-}
-
-.fade-in-down {
-  animation: fadeInDown 1s ease both;
-}
-.fade-in-up {
-  animation: fadeInUp 1s ease both;
-}
-.delay-1s {
-  animation-delay: 0.5s;
-}
-.delay-2s {
-  animation-delay: 1s;
-}
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.features-section {
-  background-color: #ecfdf5;
-}
-.feature-card {
-  transition: 0.3s ease;
-  border: none;
-}
-.feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-
-.why-section {
-  background: linear-gradient(135deg, #16a34a, #065f46);
-}
-.reason-box {
-  transition: all 0.3s ease;
-}
-.reason-box:hover {
-  transform: scale(1.05);
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-.footer {
-  background-color: #f0fdf4;
-  border-top: 1px solid #d1fae5;
-}
-</style>

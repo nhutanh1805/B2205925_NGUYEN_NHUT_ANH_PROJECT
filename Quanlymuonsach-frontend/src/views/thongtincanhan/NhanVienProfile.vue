@@ -3,7 +3,7 @@
 
     <div class="hero-section text-white text-center py-5 mb-5">
       <h1 class="display-4 fw-bold">
-        <i class="fas fa-id-card me-2"></i> Thông Tin Cá Nhân
+        <i class="fas fa-id-card me-2"></i> Thông Tin Nhân Viên
       </h1>
       <p class="lead">Thông tin tài khoản của bạn tại hệ thống quản lý mượn sách</p>
     </div>
@@ -15,12 +15,12 @@
 
           <div class="text-center mb-4">
             <i class="fas fa-user-circle text-primary" style="font-size: 100px;"></i>
-            <h3 class="fw-bold mt-3">{{ user.HoLot }} {{ user.Ten }}</h3>
+            <h3 class="fw-bold mt-3">{{ nhanvien.HoTenNV }}</h3>
             <p class="text-muted mb-1">
-              <i class="fas fa-barcode"></i> Reader ID: <b>{{ user.MaDocGia }}</b>
+              <i class="fas fa-id-badge"></i> Employee ID: <b>{{ nhanvien.MSNV }}</b>
             </p>
-            <p class="text-muted">
-              <i class="fas fa-user"></i> Username: <b>{{ user.Username }}</b>
+            <p class="text-muted mb-1">
+              <i class="fas fa-briefcase"></i> Chức vụ: <b>{{ nhanvien.ChucVu }}</b>
             </p>
           </div>
 
@@ -28,17 +28,17 @@
 
           <div class="mb-3">
             <label class="fw-semibold">Họ và Tên:</label>
-            <p class="form-control">{{ user.HoLot }} {{ user.Ten }}</p>
+            <p class="form-control">{{ nhanvien.HoTenNV }}</p>
           </div>
 
           <div class="mb-3">
             <label class="fw-semibold">Phone Number:</label>
-            <p class="form-control">{{ user.DienThoai || "Not updated" }}</p>
+            <p class="form-control">{{ nhanvien.SoDienThoai || "Chưa cập nhật" }}</p>
           </div>
 
           <div class="mb-3">
             <label class="fw-semibold">Address:</label>
-            <p class="form-control">{{ user.DiaChi || "Not updated" }}</p>
+            <p class="form-control">{{ nhanvien.DiaChi || "Chưa cập nhật" }}</p>
           </div>
 
           <div class="text-center mt-4">
@@ -63,22 +63,22 @@
 
 <script>
 export default {
-  name: "UserProfile",
+  name: "NhanVienProfile",
   data() {
     return {
-      user: JSON.parse(localStorage.getItem("user")),
+      nhanvien: JSON.parse(localStorage.getItem("nhanvien")),
     };
   },
   mounted() {
-    if (!this.user) {
-      alert("Please log in first!");
-      this.$router.push("/login");
+    if (!this.nhanvien) {
+      alert("Vui lòng đăng nhập trước!");
+      this.$router.push("/nhanvien/login");
     }
   },
   methods: {
     logout() {
-      localStorage.removeItem("user");
-      this.$router.push("/login");
+      localStorage.removeItem("nhanvien");
+      this.$router.push("/nhanvien/login");
     },
   },
 };

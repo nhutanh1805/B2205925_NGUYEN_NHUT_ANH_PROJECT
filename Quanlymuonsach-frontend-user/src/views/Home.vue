@@ -1,12 +1,19 @@
 <template>
   <div class="home-page">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top"
+    >
       <div class="container">
         <router-link to="/" class="navbar-brand fw-bold">
           📚 Thư Viện Trực Tuyến
         </router-link>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -22,7 +29,9 @@
               <a href="#why" class="nav-link">Vì sao chọn</a>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" :to="{ name: 'sach.list' }">Sách</router-link>
+              <router-link class="nav-link" :to="{ name: 'sach.list' }"
+                >Sách</router-link
+              >
             </li>
 
             <template v-if="!user">
@@ -40,8 +49,13 @@
 
             <template v-else>
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle fw-bold text-warning" href="/thongtincanhan" id="userDropdown"
-                  role="button" data-bs-toggle="dropdown">
+                <a
+                  class="nav-link dropdown-toggle fw-bold text-warning"
+                  href="/thongtincanhan"
+                  id="userDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
                   {{ user.HoTen }}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -58,8 +72,14 @@
       </div>
     </nav>
 
-    <section class="vh-100 d-flex align-items-center text-white position-relative"
-      style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;">
+    <section
+      class="vh-100 d-flex align-items-center text-white position-relative"
+      style="
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)),
+          url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1920&q=80')
+            center/cover no-repeat;
+      "
+    >
       <div class="container text-center position-relative">
         <h1 class="display-4 fw-bold mb-3">
           <i class="fas fa-book-open me-2"></i> Thư Viện Trực Tuyến
@@ -104,24 +124,70 @@
 
     <section id="about" class="about-section py-5">
       <div class="container">
-        <h2 class="fw-bold mb-5 text-primary text-center animate__animated animate__fadeInDown">
-          <i class="fas fa-info-circle me-2"></i> Giới thiệu Thư Viện
+        <h2
+          class="fw-bold mb-5 text-center text-primary animate__animated animate__fadeInDown"
+        >
+          <i class="fas fa-info-circle me-2"></i>Khám Phá Thư Viện Thông Minh
         </h2>
+
         <div class="row align-items-center">
-          <div class="col-md-6 text-center mb-4 mb-md-0 animate__animated animate__fadeInLeft">
-            <img src="https://img.freepik.com/free-vector/modern-library-interior-flat-design_23-2147499732.jpg"
-              alt="Library Illustration" class="img-fluid rounded-4 shadow-lg border border-2 border-primary-subtle"
-              style="max-height: 360px; object-fit: cover" />
+          <!-- Hình ảnh -->
+          <div
+            class="col-md-6 mb-4 mb-md-0 text-center animate__animated animate__fadeInLeft"
+          >
+            <div
+              class="rounded-4 overflow-hidden shadow-lg border border-3 border-primary-subtle"
+              style="max-height: 380px"
+            >
+              <img
+                src="https://img.freepik.com/free-vector/people-library-isometric-illustration_1284-64336.jpg"
+                alt="Library"
+                class="img-fluid"
+                style="object-fit: cover; width: 100%; height: 100%"
+              />
+            </div>
           </div>
+
+          <!-- Nội dung -->
           <div class="col-md-6 animate__animated animate__fadeInRight">
-            <p class="text-muted fs-5">
-              Hệ thống cho phép độc giả tìm kiếm sách, quản lý mượn trả, theo dõi thông tin cá nhân một cách thuận tiện.
+            <p class="fs-5 text-muted mb-4">
+              Chào mừng bạn đến với hệ thống thư viện hiện đại – nơi tri thức
+              được số hóa, giúp bạn tiếp cận hàng nghìn đầu sách nhanh chóng,
+              tiện lợi và đầy cảm hứng.
             </p>
-            <ul class="list-unstyled features-list">
-              <li><i class="fas fa-check-circle text-primary me-2"></i> Tra cứu sách nhanh chóng</li>
-              <li><i class="fas fa-check-circle text-primary me-2"></i> Theo dõi lịch sử mượn trả</li>
-              <li><i class="fas fa-check-circle text-primary me-2"></i> Quản lý thông tin cá nhân</li>
-            </ul>
+
+            <div
+              class="p-4 rounded-4 shadow-sm bg-light border-start border-4 border-primary"
+            >
+              <ul class="list-unstyled mb-0">
+                <li class="mb-3">
+                  <i class="fas fa-bolt text-primary me-2"></i>
+                  <span class="fw-semibold">Tìm kiếm siêu nhanh</span> – chỉ cần
+                  vài giây là có ngay cuốn sách bạn cần.
+                </li>
+                <li class="mb-3">
+                  <i class="fas fa-book-reader text-primary me-2"></i>
+                  <span class="fw-semibold">Lịch sử mượn trả rõ ràng</span> –
+                  theo dõi hành trình đọc sách của bạn.
+                </li>
+                <li class="mb-3">
+                  <i class="fas fa-user-shield text-primary me-2"></i>
+                  <span class="fw-semibold">Quản lý thông tin cá nhân</span> dễ
+                  dàng và bảo mật tuyệt đối.
+                </li>
+                <li class="mb-2">
+                  <i class="fas fa-heart text-primary me-2"></i>
+                  <span class="fw-semibold">Khơi nguồn đam mê đọc sách</span>
+                  mọi lúc, mọi nơi.
+                </li>
+              </ul>
+            </div>
+
+            <div class="mt-4">
+              <a href="/books" class="btn btn-primary btn-lg px-4 shadow-sm">
+                <i class="fas fa-search me-2"></i>Khám phá sách ngay
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -144,7 +210,8 @@
 
     <footer class="footer text-center py-4">
       <p class="mb-1 small text-muted">
-        © 2025 Thư Viện Trực Tuyến | Thiết kế bởi <b>B2205925 - Nguyễn Nhựt Anh</b>
+        © 2025 Thư Viện Trực Tuyến | Thiết kế bởi
+        <b>B2205925 - Nguyễn Nhựt Anh</b>
       </p>
     </footer>
   </div>
@@ -157,10 +224,22 @@ export default {
     return {
       user: null,
       features: [
-        { title: "Xem sách", icon: "fas fa-book text-primary", desc: "Tìm kiếm và tra cứu sách nhanh chóng." },
-        { title: "Mượn trả", icon: "fas fa-exchange-alt text-success", desc: "Quản lý lịch sử mượn trả cá nhân." },
-        { title: "Thông tin cá nhân", icon: "fas fa-user text-info", desc: "Quản lý thông tin tài khoản của bạn." }
-      ]
+        {
+          title: "Xem sách",
+          icon: "fas fa-book text-primary",
+          desc: "Tìm kiếm và tra cứu sách nhanh chóng.",
+        },
+        {
+          title: "Mượn trả",
+          icon: "fas fa-exchange-alt text-success",
+          desc: "Quản lý lịch sử mượn trả cá nhân.",
+        },
+        {
+          title: "Thông tin cá nhân",
+          icon: "fas fa-user text-info",
+          desc: "Quản lý thông tin tài khoản của bạn.",
+        },
+      ],
     };
   },
   created() {
@@ -172,8 +251,8 @@ export default {
       localStorage.removeItem("user");
       this.user = null;
       this.$router.push("/login");
-    }
-  }
+    },
+  },
 };
 </script>
 

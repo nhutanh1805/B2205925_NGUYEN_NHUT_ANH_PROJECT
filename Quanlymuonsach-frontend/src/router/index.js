@@ -46,7 +46,12 @@ const routes = [
     name: "user.profile",
     component: () => import("@/views/thongtincanhan/UserProfile.vue"),
   },
-
+{
+  path: "/nhanvien/profile",
+  name: "nhanvien.profile",
+  component: () => import("@/views/thongtincanhan/NhanVienProfile.vue"),
+  meta: { requiresAuth: true }, 
+},
   {
     path: "/sach",
     name: "sach.list",
