@@ -1,86 +1,115 @@
 <template>
-  <div class="books-page py-5">
+  <div class="bg-light min-vh-100 py-5">
     <div class="container">
-      <div class="hero-box text-center text-white py-4 mb-5 rounded-4 shadow">
-        <h2 class="fw-bold mb-2"><i class="fas fa-book-reader"></i> Quản lý thư viện thông minh</h2>
-        <p class="lead mb-0">Khám phá, quản lý và yêu lại những cuốn sách cũ – theo cách hiện đại nhất 📚</p>
+
+      <div class="text-center mb-5">
+        <div class="p-5 rounded-4 bg-success text-white shadow-lg" style="background: linear-gradient(135deg,#38b000,#1b5e20);">
+          <h1 class="fw-bold display-5"><i class="fas fa-book-reader me-2"></i>Thư viện thông minh</h1>
+          <p class="lead opacity-75">Khám phá và yêu lại những cuốn sách cũ theo cách hiện đại nhất 📚</p>
+        </div>
       </div>
 
       <div class="row g-4">
-        <div class="col-lg-5">
-          <div class="p-4 bg-white rounded-4 shadow-sm">
-            <InputSearch v-model="searchText" @submit="refreshList" />
-            <h4 class="section-title text-success mt-4">
-              <i class="fas fa-layer-group me-2"></i> Danh sách Sách
-            </h4>
+        <!-- Sidebar: Danh sách sách -->
+        <div class="col-lg-4">
+          <div class="card shadow-sm rounded-4 border-0">
+            <div class="card-body">
 
-            <ListView
-              v-if="filteredBooksCount > 0"
-              :items="filteredBooks"
-              v-model:activeIndex="activeIndex"
-            />
+              <InputSearch v-model="searchText" @submit="refreshList" />
 
-            <p v-else class="text-muted mt-3 text-center fst-italic">
-              <i class="fas fa-inbox me-1"></i> Không có sách nào.
-            </p>
+              <h5 class="mt-4 fw-bold border-start border-4 border-success ps-3">
+                <i class="fas fa-layer-group me-2"></i>Danh sách Sách
+              </h5>
 
-            <div class="d-flex flex-wrap gap-2 mt-4 justify-content-center">
-              <button class="btn btn-success btn-sm" @click="refreshList">
-                <i class="fas fa-sync-alt"></i> Làm mới
-              </button>
-              <button class="btn btn-primary btn-sm" @click="goToAddBook">
-                <i class="fas fa-plus-circle"></i> Thêm mới
-              </button>
-              <button class="btn btn-danger btn-sm" @click="removeAllBooks">
-                <i class="fas fa-trash-alt"></i> Xóa tất cả
-              </button>
-            </div>
-          </div>
-        </div>
+              <div class="list-group mt-3">
+                <button 
+                  v-for="(book, index) in filteredBooks" 
+                  :key="book._id"
+                  type="button" 
+                  class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                  :class="{ active: index === activeIndex }"
+                  @click="activeIndex = index"
+                >
+                  <div>
+                    <div class="fw-semibold">{{ book.TenSach }}</div>
+                    <small class="text-muted">{{ book.TacGia }} • {{ book.TheLoai }}</small>
+                  </div>
+                  <span class="badge bg-success rounded-pill">{{ book.SoQuyen }}</span>
+                </button>
 
-        <div class="col-lg-7" v-if="activeBook">
-          <div class="p-4 bg-white rounded-4 shadow-sm">
-            <h4 class="section-title text-success">
-              <i class="fas fa-book-open me-2"></i> Chi tiết Sách
-            </h4>
-
-            <div class="book-card p-3 border rounded-4 bg-light shadow-sm mb-3">
-              <DetailCard :item="activeBook" />
-              <div class="mt-3">
-                <span class="badge bg-success me-2">
-                  <i class="fas fa-tag"></i> {{ activeBook.TheLoai }}
-                </span>
-                <span class="badge bg-secondary">
-                  <i class="fas fa-user-pen"></i> {{ activeBook.TacGia }}
-                </span>
+                <p v-if="filteredBooksCount === 0" class="text-center text-muted mt-3 fst-italic">
+                  <i class="fas fa-inbox me-1"></i> Không có sách nào.
+                </p>
               </div>
-            </div>
 
-            <div class="d-flex gap-2 mt-3 justify-content-center">
-              <router-link
-                class="btn btn-warning btn-sm"
-                :to="{ name: 'sach.edit', params: { id: activeBook._id }}"
-              >
-                <i class="fas fa-edit"></i> Chỉnh sửa
-              </router-link>
+              <div class="d-flex flex-wrap gap-2 justify-content-center mt-4">
+                <button class="btn btn-success btn-sm rounded-pill" @click="refreshList">
+                  <i class="fas fa-sync-alt me-1"></i> Làm mới
+                </button>
+                <button class="btn btn-primary btn-sm rounded-pill" @click="goToAddBook">
+                  <i class="fas fa-plus-circle me-1"></i> Thêm mới
+                </button>
+                <button class="btn btn-danger btn-sm rounded-pill" @click="removeAllBooks">
+                  <i class="fas fa-trash-alt me-1"></i> Xóa tất cả
+                </button>
+              </div>
 
-              <button class="btn btn-primary btn-sm" @click="muonSach(activeBook)">
-                <i class="fas fa-book-reader"></i> Mượn sách
-              </button>
             </div>
           </div>
         </div>
+
+        <div class="col-lg-8" v-if="activeBook">
+          <div class="card shadow-sm rounded-4 border-0">
+            <div class="card-body">
+
+              <h5 class="fw-bold border-start border-4 border-success ps-3">
+                <i class="fas fa-book-open me-2"></i>Chi tiết sách
+              </h5>
+
+              <div class="card mt-3 shadow-sm rounded-4 bg-light border p-4">
+                <DetailCard :item="activeBook" />
+                <div class="mt-3 d-flex flex-wrap gap-2">
+                  <span class="badge bg-success rounded-pill px-3 py-2">
+                    <i class="fas fa-tag me-1"></i>{{ activeBook.TheLoai }}
+                  </span>
+                  <span class="badge bg-secondary rounded-pill px-3 py-2">
+                    <i class="fas fa-user-pen me-1"></i>{{ activeBook.TacGia }}
+                  </span>
+                  <span class="badge bg-info text-dark rounded-pill px-3 py-2">
+                    <i class="fas fa-book me-1"></i>{{ activeBook.SoQuyen }} Quyển
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
+                <router-link
+                  class="btn btn-warning rounded-pill px-4"
+                  :to="{ name: 'sach.edit', params: { id: activeBook._id }}"
+                >
+                  <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                </router-link>
+                <button class="btn btn-primary rounded-pill px-4" @click="muonSach(activeBook)">
+                  <i class="fas fa-book-reader me-1"></i> Mượn sách
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="text-center mt-5">
-        <router-link to="/" class="btn btn-outline-success px-4 py-2 shadow-sm">
+        <router-link to="/" class="btn btn-outline-success rounded-pill px-4 py-2 shadow-sm">
           <i class="fas fa-home me-2"></i> Quay về Trang chủ
         </router-link>
-        <p class="text-muted mt-3 fst-italic">“Một cuốn sách hay có thể thay đổi cả một tâm hồn.” ✨</p>
+        <p class="text-muted mt-3 fst-italic">“Một cuốn sách hay có thể thay đổi cả một tâm hồn.” 🌿</p>
       </div>
+
     </div>
   </div>
 </template>
+
 
 <script>
 import InputSearch from "@/components/InputSearch.vue";
@@ -155,14 +184,9 @@ export default {
       }
 
       const soLuongMuon = Number(prompt("Bạn muốn mượn bao nhiêu quyển?"));
+      if (!soLuongMuon || soLuongMuon <= 0) return alert("Số lượng không hợp lệ!");
 
-      if (!soLuongMuon || soLuongMuon <= 0) {
-        return alert("Số lượng không hợp lệ!");
-      }
-
-      if (soLuongMuon > sach.SoQuyen) {
-        return alert("Số lượng vượt quá số quyển đang còn!");
-      }
+      if (soLuongMuon > sach.SoQuyen) return alert("Số lượng vượt quá số quyển đang còn!");
 
       const MaPhieuMuon = "PM" + Math.floor(1000 + Math.random() * 9000);
       const today = new Date();
@@ -206,37 +230,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.books-page {
-  font-family: "Poppins", sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #e6f9ec, #ffffff);
-}
-.hero-box {
-  background: linear-gradient(135deg, #22c55e, #15803d);
-}
-.section-title {
-  font-weight: 700;
-  font-size: 20px;
-  border-left: 4px solid #16a34a;
-  padding-left: 10px;
-  margin-bottom: 16px;
-}
-.btn {
-  border-radius: 10px;
-  transition: all 0.25s ease;
-}
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.book-card:hover {
-  transform: scale(1.02);
-  transition: all 0.3s ease;
-  background: #f8fff9;
-}
-.container {
-  max-width: 1150px;
-}
-</style>

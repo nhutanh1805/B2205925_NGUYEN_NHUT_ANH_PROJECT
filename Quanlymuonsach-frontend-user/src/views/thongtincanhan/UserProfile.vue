@@ -9,50 +9,49 @@
     </div>
 
     <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
+      <div class="col-lg-10">
 
-        <div class="card shadow-lg p-4 rounded-4">
+        <div class="card shadow-lg rounded-4 p-4">
+          <div class="row g-4">
 
-          <div class="text-center mb-4">
-            <i class="fas fa-user-circle text-primary" style="font-size: 100px;"></i>
-            <h3 class="fw-bold mt-3">{{ user.HoLot }} {{ user.Ten }}</h3>
-            <p class="text-muted mb-1">
-              <i class="fas fa-barcode"></i> Reader ID: <b>{{ user.MaDocGia }}</b>
-            </p>
-            <p class="text-muted">
-              <i class="fas fa-user"></i> Username: <b>{{ user.Username }}</b>
-            </p>
+            <div class="col-md-4 text-center border-end d-flex flex-column align-items-center justify-content-center">
+              <i class="fas fa-user-circle text-primary mb-3" style="font-size: 120px;"></i>
+              <h3 class="fw-bold">{{ user.HoLot }} {{ user.Ten }}</h3>
+              <p class="text-muted mb-1">
+                <i class="fas fa-barcode me-1"></i> Reader ID: <b>{{ user.MaDocGia }}</b>
+              </p>
+              <p class="text-muted mb-0">
+                <i class="fas fa-user me-1"></i> Username: <b>{{ user.Username }}</b>
+              </p>
+            </div>
+
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label class="fw-semibold">Họ và Tên:</label>
+                <p class="form-control">{{ user.HoLot }} {{ user.Ten }}</p>
+              </div>
+
+              <div class="mb-3">
+                <label class="fw-semibold">Phone Number:</label>
+                <p class="form-control">{{ user.DienThoai || "Not updated" }}</p>
+              </div>
+
+              <div class="mb-3">
+                <label class="fw-semibold">Address:</label>
+                <p class="form-control">{{ user.DiaChi || "Not updated" }}</p>
+              </div>
+
+              <div class="d-flex gap-3 mt-4 flex-wrap">
+                <router-link to="/" class="btn btn-success flex-fill">
+                  <i class="fas fa-arrow-left me-2"></i> Back to Home
+                </router-link>
+                <button class="btn btn-danger flex-fill" @click="logout">
+                  <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                </button>
+              </div>
+            </div>
+
           </div>
-
-          <hr />
-
-          <div class="mb-3">
-            <label class="fw-semibold">Họ và Tên:</label>
-            <p class="form-control">{{ user.HoLot }} {{ user.Ten }}</p>
-          </div>
-
-          <div class="mb-3">
-            <label class="fw-semibold">Phone Number:</label>
-            <p class="form-control">{{ user.DienThoai || "Not updated" }}</p>
-          </div>
-
-          <div class="mb-3">
-            <label class="fw-semibold">Address:</label>
-            <p class="form-control">{{ user.DiaChi || "Not updated" }}</p>
-          </div>
-
-          <div class="text-center mt-4">
-            <router-link to="/" class="btn btn-success px-4">
-              <i class="fas fa-arrow-left"></i> Back to Home
-            </router-link>
-          </div>
-
-          <div class="text-center mt-3">
-            <button class="btn btn-danger px-4" @click="logout">
-              <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
-            </button>
-          </div>
-
         </div>
 
       </div>
@@ -91,18 +90,34 @@ export default {
 }
 
 .card {
-  border-radius: 15px;
+  border-radius: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
 
 .form-control {
   background-color: #f8f9fa;
   border-radius: 12px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #d1d1d1;
   padding: 12px;
 }
 
 .btn {
   font-weight: 600;
   text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.border-end {
+  border-right: 1px solid #dee2e6 !important;
 }
 </style>
