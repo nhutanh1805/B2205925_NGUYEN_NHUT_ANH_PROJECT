@@ -2,8 +2,12 @@ const TheodoimuonsachService = require("../services/theodoimuonsach.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 
+const isEmptyObject = (obj) => {
+  return !obj || Object.keys(obj ?? {}).length === 0;
+};
+
 exports.create = async (req, res, next) => {
-  if (!req.body?.MaDocGia || !req.body?.MaSach) {
+  if (isEmptyObject(req.body) || !req.body?.MaDocGia || !req.body?.MaSach) {
     return next(new ApiError(400, "MaDocGia và MaSach không được để trống"));
   }
 
@@ -45,24 +49,18 @@ exports.findOne = async (req, res, next) => {
 };
 
 exports.update = async (req, res, next) => {
-  if (Object.keys(req.body).length === 0) {
-    return next(new ApiError(400, "Dữ liệu cập nhật không được để trống"));
-  }
-
   try {
     const service = new TheodoimuonsachService(MongoDB.client);
-    const document = await service.update(req.params.id, req.body);
-
-    if (!document) {
-      return next(new ApiError(404, "Không tìm thấy phiếu mượn để cập nhật"));
-    }
+    const result = await service.traSach(req.params.id);
 
     return res.status(200).json({
-      message: "Cập nhật phiếu mượn thành công",
-      data: document,
+      message: result.message,
+      data: result.phieuMuon,
+      soLuongTra: result.soLuongTra
     });
   } catch (error) {
-    return next(new ApiError(500, "Lỗi khi cập nhật phiếu mượn"));
+    console.error("Lỗi trả sách:", error.message);
+    return next(new ApiError(400, error.message || "Lỗi khi trả sách"));
   }
 };
 

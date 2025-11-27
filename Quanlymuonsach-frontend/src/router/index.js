@@ -40,12 +40,6 @@ const routes = [
   meta: { requiresGuest: true },
 },
 
-
-  {
-    path: "/thongtincanhan",
-    name: "user.profile",
-    component: () => import("@/views/thongtincanhan/UserProfile.vue"),
-  },
 {
   path: "/nhanvien/profile",
   name: "nhanvien.profile",

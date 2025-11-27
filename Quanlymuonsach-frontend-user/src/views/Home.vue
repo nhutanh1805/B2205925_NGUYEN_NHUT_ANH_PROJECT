@@ -108,7 +108,7 @@
             <div class="p-3 bg-dark bg-opacity-50 rounded">
               <i class="fas fa-user-graduate fa-2x mb-2 text-info"></i>
               <h5 class="fw-bold mb-0">5.000+</h5>
-              <small>Độc giả</small>
+              <small>Đọc giả</small>
             </div>
           </div>
           <div class="col-6 col-md-3">

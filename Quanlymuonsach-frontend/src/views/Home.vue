@@ -35,7 +35,7 @@
             </li>
             <li class="nav-item">
               <router-link class="nav-link" :to="{ name: 'docgia.list' }"
-                >Độc Giả</router-link
+                >Đọc Giả</router-link
               >
             </li>
 
@@ -45,7 +45,7 @@
                   class="btn btn-light btn-sm ms-3"
                   to="nhanvien/login"
                 >
-                  <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                  <i class="fas fa-sign-in-alt"></i> Đăng nhập nhân viên
                 </router-link>
               </li>
               <li class="nav-item">
@@ -53,7 +53,7 @@
                   class="btn btn-warning btn-sm ms-2"
                   to="nhanvien/register"
                 >
-                  <i class="fas fa-user-plus"></i> Đăng ký
+                  <i class="fas fa-user-plus"></i> Đăng ký nhân viên
                 </router-link>
               </li>
             </template>
@@ -104,7 +104,7 @@
             <i class="fas fa-book me-2"></i> Xem sách
           </a>
           <a href="/docgia" class="btn btn-outline-light btn-lg px-4">
-            <i class="fas fa-users me-2"></i> Độc giả
+            <i class="fas fa-users me-2"></i> Đọc giả
           </a>
         </div>
         <div class="row justify-content-center g-3">
@@ -119,7 +119,7 @@
             <div class="p-3 bg-dark bg-opacity-50 rounded">
               <i class="fas fa-user-graduate fa-2x mb-2 text-info"></i>
               <h5 class="fw-bold mb-0">5.000+</h5>
-              <small>Độc giả</small>
+              <small>Đọc giả</small>
             </div>
           </div>
           <div class="col-6 col-md-3">
@@ -165,7 +165,7 @@
             <p class="text-muted fs-5">
               <b>Quản Lý Mượn Sách</b> là giải pháp công nghệ tiên tiến giúp thư
               viện vận hành thông minh hơn — hỗ trợ quản lý <b>sách</b>,
-              <b>độc giả</b>, <b>nhân viên</b> và <b>mượn trả</b> một cách nhanh
+              <b>đọc giả</b>, <b>nhân viên</b> và <b>mượn trả</b> một cách nhanh
               chóng, chính xác và chuyên nghiệp.
             </p>
 
@@ -182,7 +182,7 @@
               </li>
               <li>
                 <i class="fas fa-check-circle text-success me-2"></i> Tra cứu
-                sách & độc giả cực nhanh chỉ với vài giây.
+                sách & đọc giả cực nhanh chỉ với vài giây.
               </li>
               <li>
                 <i class="fas fa-check-circle text-success me-2"></i> Hỗ trợ
@@ -306,9 +306,9 @@ export default {
           desc: "Quản lý hàng ngàn đầu sách dễ dàng.",
         },
         {
-          title: "Độc Giả",
+          title: "Đọc Giả",
           icon: "fas fa-users text-success",
-          desc: "Theo dõi thông tin độc giả nhanh chóng.",
+          desc: "Theo dõi thông tin đọc giả nhanh chóng.",
         },
         {
           title: "Nhân Viên",
