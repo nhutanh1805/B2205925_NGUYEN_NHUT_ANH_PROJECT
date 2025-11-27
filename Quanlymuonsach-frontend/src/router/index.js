@@ -4,9 +4,11 @@ import UserLogin from "@/views/auth/UserLogin.vue";
 import UserRegister from "@/views/auth/UserRegister.vue";
 
 import SachList from "@/views/sach/SachList.vue";
+import NhaXuatBanList from "@/views/nhaxuatban/NhaXuatBanList.vue";
+import NhaXuatBanAdd from "@/views/nhaxuatban/NhaXuatBanAdd.vue";
+import NhaXuatBanEdit from "@/views/nhaxuatban/NhaXuatBanEdit.vue";
 
 const routes = [
-
   {
     path: "/",
     name: "home",
@@ -26,26 +28,27 @@ const routes = [
     meta: { requiresGuest: true },
   },
 
-{
-  path: "/nhanvien/login",
-  name: "nhanvien.login",
-  component: () => import("@/views/auth/NhanVienLogin.vue"),
-  meta: { requiresGuest: true },
-},
+  {
+    path: "/nhanvien/login",
+    name: "nhanvien.login",
+    component: () => import("@/views/auth/NhanVienLogin.vue"),
+    meta: { requiresGuest: true },
+  },
 
-{
-  path: "/nhanvien/register",
-  name: "nhanvien.register",
-  component: () => import("@/views/auth/NhanVienRegister.vue"),
-  meta: { requiresGuest: true },
-},
+  {
+    path: "/nhanvien/register",
+    name: "nhanvien.register",
+    component: () => import("@/views/auth/NhanVienRegister.vue"),
+    meta: { requiresGuest: true },
+  },
 
-{
-  path: "/nhanvien/profile",
-  name: "nhanvien.profile",
-  component: () => import("@/views/thongtincanhan/NhanVienProfile.vue"),
-  meta: { requiresAuth: true }, 
-},
+  {
+    path: "/nhanvien/profile",
+    name: "nhanvien.profile",
+    component: () => import("@/views/thongtincanhan/NhanVienProfile.vue"),
+    meta: { requiresAuth: true }, 
+  },
+
   {
     path: "/sach",
     name: "sach.list",
@@ -60,6 +63,23 @@ const routes = [
     path: "/sach/:id",
     name: "sach.edit",
     component: () => import("@/views/sach/SachEdit.vue"),
+    props: true,
+  },
+
+  {
+    path: "/nhaxuatban",
+    name: "nhaxuatban.list",
+    component: NhaXuatBanList,
+  },
+  {
+    path: "/nhaxuatban/add",
+    name: "nhaxuatban.add",
+    component: NhaXuatBanAdd,
+  },
+  {
+    path: "/nhaxuatban/:id",
+    name: "nhaxuatban.edit",
+    component: NhaXuatBanEdit,
     props: true,
   },
 
@@ -98,12 +118,11 @@ const routes = [
     props: true,
   },
 
- {
-  path: "/phieumuon",
-  name: "phieumuon.list",
-  component: () => import("@/views/theodoimuonsach/MuonSachList.vue"),
-},
-
+  {
+    path: "/phieumuon",
+    name: "phieumuon.list",
+    component: () => import("@/views/theodoimuonsach/MuonSachList.vue"),
+  },
 
   {
     path: "/:pathMatch(.*)*",

@@ -9,12 +9,12 @@ class NhaXuatBanService {
     return (await this.api.get("/")).data;
   }
 
-  async create(data) {
-    return (await this.api.post("/", data)).data;
-  }
-
   async get(id) {
     return (await this.api.get(`/${id}`)).data;
+  }
+
+  async create(data) {
+    return (await this.api.post("/", data)).data;
   }
 
   async update(id, data) {
@@ -27,6 +27,10 @@ class NhaXuatBanService {
 
   async deleteAll() {
     return (await this.api.delete("/")).data;
+  }
+
+  async getList() {
+    return (await this.api.get("/list")).data;
   }
 
   async getDropdown() {

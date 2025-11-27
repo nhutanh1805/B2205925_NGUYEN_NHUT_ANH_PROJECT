@@ -14,20 +14,30 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-
-          <!-- Trang chủ -->
           <li class="nav-item">
             <router-link class="nav-link" to="/">Trang chủ</router-link>
           </li>
 
-          <!-- Sách -->
           <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'sach.list' }">Sách</router-link>
           </li>
 
-          <!-- Phiếu mượn -->
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'nhaxuatban.list' }">
+              <i class="fas fa-building me-1"></i>Nhà Xuất Bản
+            </router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'docgia.list' }">Độc giả</router-link>
+          </li>
+
           <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'phieumuon.list' }">Phiếu mượn</router-link>
+          </li>
+
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'muonsach.list' }">Mượn sách</router-link>
           </li>
 
           <li class="nav-item">
@@ -41,7 +51,6 @@
               Đăng nhập nhân viên
             </router-link>
           </li>
-
         </ul>
       </div>
     </div>
