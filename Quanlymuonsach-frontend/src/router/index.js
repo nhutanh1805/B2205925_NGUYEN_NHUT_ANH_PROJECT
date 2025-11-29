@@ -127,6 +127,13 @@ const routes = [
     name: "notfound",
     component: () => import("@/views/NotFound.vue"),
   },
+
+  {
+  path: "/nhaxuatban/thongke",
+  name: "nhaxuatban.thongke",
+  component: () => import("@/views/nhaxuatban/ThongKe.vue"),
+},
+
 ];
 
 const router = createRouter({

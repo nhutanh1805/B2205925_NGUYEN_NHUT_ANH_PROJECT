@@ -23,7 +23,9 @@ exports.findAll = async (req, res, next) => {
   try {
     const sachService = new SachService(MongoDB.client);
     const { TenSach } = req.query;
-    const documents = TenSach ? await sachService.findByName(TenSach) : await sachService.find({});
+    const documents = TenSach
+      ? await sachService.findByName(TenSach)
+      : await sachService.find({});
     return res.status(200).json(documents);
   } catch (error) {
     return next(new ApiError(500, "Lỗi khi truy xuất danh sách sách"));
@@ -80,5 +82,15 @@ exports.deleteAll = async (_req, res, next) => {
     return res.status(200).json({ message: `${deletedCount} sách đã được xóa thành công` });
   } catch (error) {
     return next(new ApiError(500, "Đã xảy ra lỗi khi xóa tất cả sách"));
+  }
+};
+
+exports.countByNXB = async (req, res, next) => {
+  try {
+    const sachService = new SachService(MongoDB.client);
+    const data = await sachService.countByNXB();
+    return res.status(200).json(data);
+  } catch (error) {
+    return next(new ApiError(500, "Lỗi thống kê số lượng sách theo NXB"));
   }
 };

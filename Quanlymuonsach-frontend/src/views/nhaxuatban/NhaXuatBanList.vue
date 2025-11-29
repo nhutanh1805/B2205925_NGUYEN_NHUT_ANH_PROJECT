@@ -10,6 +10,11 @@
           <router-link to="/nhaxuatban/add" class="btn btn-success btn-sm">
             <i class="fas fa-plus me-1"></i>Thêm mới
           </router-link>
+
+          <router-link to="/nhaxuatban/thongke" class="btn btn-info btn-sm">
+            <i class="fas fa-chart-bar me-1"></i>Thống kê
+          </router-link>
+
           <button 
             class="btn btn-danger btn-sm" 
             @click="handleDeleteAll"
@@ -18,6 +23,7 @@
             <i class="fas fa-trash-alt me-1"></i>
             Xóa tất cả
           </button>
+
           <button 
             class="btn btn-outline-secondary btn-sm" 
             @click="refresh"

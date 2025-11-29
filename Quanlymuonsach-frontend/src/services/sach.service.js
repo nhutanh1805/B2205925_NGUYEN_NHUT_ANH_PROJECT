@@ -33,6 +33,10 @@ class SachService {
   async getNXBList() {
     return await NhaXuatBanService.getDropdown();
   }
+async getStatisticsByNXB() {
+    return (await this.api.get("/thongke/nxb")).data;
+  }
+
 }
 
 export default new SachService();
