@@ -3,6 +3,7 @@ const { ObjectId } = require("mongodb");
 class SachService {
   constructor(client) {
     this.Sachs = client.db().collection("sach");
+    this.NXBs = client.db().collection("nhaxuatban");
   }
 
   extractSachData(payload) {
@@ -30,7 +31,7 @@ class SachService {
     return { _id: result.insertedId, ...sach };
   }
 
-  async find(filter) {
+  async find(filter = {}) {
     const cursor = await this.Sachs.find(filter);
     return await cursor.toArray();
   }
@@ -48,9 +49,7 @@ class SachService {
   }
 
   async update(id, payload) {
-    const filter = {
-      _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-    };
+    const filter = { _id: ObjectId.isValid(id) ? new ObjectId(id) : null };
     const update = this.extractSachData(payload);
     const result = await this.Sachs.findOneAndUpdate(
       filter,
@@ -77,16 +76,30 @@ class SachService {
       {
         $group: {
           _id: "$MaNXB",
-          SoLuongSach: { $sum: 1 }
-        }
+          SoLuongSach: { $sum: 1 },
+          SoQuyen: { $sum: "$SoQuyen" },
+          SachList: { $push: { TenSach: "$TenSach", SoQuyen: "$SoQuyen" } },
+        },
       },
+      {
+        $lookup: {
+          from: "nhaxuatban",
+          localField: "_id",
+          foreignField: "MaNXB",
+          as: "nxbInfo",
+        },
+      },
+      { $unwind: "$nxbInfo" },
       {
         $project: {
           _id: 0,
           MaNXB: "$_id",
-          SoLuongSach: 1
-        }
-      }
+          TenNXB: "$nxbInfo.TenNXB",
+          SoLuongSach: 1,
+          SoQuyen: 1,
+          SachList: 1,
+        },
+      },
     ]).toArray();
   }
 }
