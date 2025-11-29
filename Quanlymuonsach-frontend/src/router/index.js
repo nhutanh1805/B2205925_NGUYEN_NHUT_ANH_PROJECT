@@ -5,8 +5,6 @@ import UserRegister from "@/views/auth/UserRegister.vue";
 
 import SachList from "@/views/sach/SachList.vue";
 import NhaXuatBanList from "@/views/nhaxuatban/NhaXuatBanList.vue";
-import NhaXuatBanAdd from "@/views/nhaxuatban/NhaXuatBanAdd.vue";
-import NhaXuatBanEdit from "@/views/nhaxuatban/NhaXuatBanEdit.vue";
 
 const routes = [
   {
@@ -71,17 +69,17 @@ const routes = [
     name: "nhaxuatban.list",
     component: NhaXuatBanList,
   },
-  {
-    path: "/nhaxuatban/add",
-    name: "nhaxuatban.add",
-    component: NhaXuatBanAdd,
-  },
-  {
-    path: "/nhaxuatban/:id",
-    name: "nhaxuatban.edit",
-    component: NhaXuatBanEdit,
-    props: true,
-  },
+ {
+  path: "/nhaxuatban/add",
+  name: "nhaxuatban.add",
+  component: () => import("@/views/nhaxuatban/NhaXuatBanAdd.vue"),
+},
+{
+  path: "/nhaxuatban/:id",
+  name: "nhaxuatban.edit",
+  component: () => import("@/views/nhaxuatban/NhaXuatBanEdit.vue"),
+  props: true,
+},
 
   {
     path: "/docgia",
