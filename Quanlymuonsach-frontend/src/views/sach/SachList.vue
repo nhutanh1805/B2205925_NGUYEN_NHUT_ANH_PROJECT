@@ -11,7 +11,7 @@
           <div class="p-4 bg-white rounded-4 shadow-sm">
             <InputSearch v-model="searchText" @submit="refreshList" />
             <h4 class="section-title text-success mt-4">
-              <i class="fas fa-layer-group me-2"></i> Danh sách Sách
+              <i class="fas fa-layer-group me-2"></i> Danh sách Sách ({{ filteredBooksCount }})
             </h4>
 
             <ListView
@@ -25,6 +25,12 @@
             </p>
 
             <div class="d-flex flex-wrap gap-2 mt-4 justify-content-center">
+              <button class="btn btn-success btn-sm" @click="exportToPDF($event)" :disabled="filteredBooksCount === 0">
+                <i class="fas fa-file-pdf me-1"></i>Xuất PDF
+              </button>
+              <button class="btn btn-primary btn-sm" @click="exportToExcel($event)" :disabled="filteredBooksCount === 0">
+                <i class="fas fa-file-excel me-1"></i>Xuất Excel
+              </button>
               <button class="btn btn-success btn-sm" @click="refreshList">
                 <i class="fas fa-sync-alt"></i> Làm mới
               </button>
@@ -87,6 +93,7 @@ import InputSearch from "@/components/InputSearch.vue";
 import ListView from "@/components/ListView.vue";
 import DetailCard from "@/components/DetailCard.vue";
 import SachService from "@/services/sach.service";
+import * as XLSX from 'xlsx';
 
 export default {
   components: { InputSearch, ListView, DetailCard },
@@ -126,6 +133,123 @@ export default {
   },
 
   methods: {
+    async exportToPDF(event) {
+      if (this.filteredBooksCount === 0) {
+        alert('Không có sách để xuất!')
+        return
+      }
+
+      const btn = event.target
+      const originalText = btn.innerHTML
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xuất...'
+      btn.disabled = true
+
+      try {
+        const { jsPDF } = await import('jspdf')
+        const jsPDFAutoTable = await import('jspdf-autotable')
+        const { default: autoTable } = jsPDFAutoTable
+
+        const doc = new jsPDF('l', 'mm', 'a4')
+
+        doc.setFontSize(20)
+        doc.text('📚 DANH SÁCH SÁCH THƯ VIỆN', 14, 20)
+        doc.setFontSize(10)
+        doc.text(`Ngày: ${new Date().toLocaleDateString('vi-VN')}`, 14, 30)
+        doc.text(`Tổng: ${this.filteredBooksCount} sách`, 14, 38)
+
+        const cols = ['STT', 'Mã', 'Tên sách', 'Tác giả', 'Thể loại', 'NXB', 'Năm', 'Số quyển', 'Giá']
+        const rows = this.filteredBooks.map((sach, i) => [
+          i + 1,
+          sach.MaSach || '',
+          sach.TenSach || '',
+          sach.TacGia || '',
+          sach.TheLoai || '',
+          sach.MaNXB || '',
+          sach.NamXuatBan || '',
+          sach.SoQuyen || 0,
+          (sach.DonGia || 0).toLocaleString('vi-VN')
+        ])
+
+        autoTable(doc, {
+          head: [cols],
+          body: rows,
+          startY: 45,
+          styles: { fontSize: 7, cellPadding: 2 },
+          headStyles: { 
+            fillColor: [52, 152, 219], 
+            textColor: 255, 
+            fontStyle: 'bold' 
+          },
+          alternateRowStyles: { fillColor: [236, 245, 253] },
+          margin: { left: 14, right: 14 }
+        })
+
+        const filename = `sach-${Date.now()}.pdf`
+        doc.save(filename)
+        
+        btn.innerHTML = '<i class="fas fa-check me-1"></i>Xuất thành công!'
+        setTimeout(() => {
+          btn.innerHTML = originalText
+          btn.disabled = false
+        }, 2000)
+        
+      } catch (error) {
+        console.error('PDF ERROR:', error)
+        alert('Lỗi xuất PDF: ' + error.message)
+        btn.innerHTML = originalText
+        btn.disabled = false
+      }
+    },
+
+    async exportToExcel(event) {
+      if (this.filteredBooksCount === 0) {
+        alert('Không có sách để xuất!')
+        return
+      }
+
+      const btn = event.target
+      const originalText = btn.innerHTML
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xuất...'
+      btn.disabled = true
+
+      try {
+        const excelData = this.filteredBooks.map((sach, index) => ({
+          'STT': index + 1,
+          'Mã sách': sach.MaSach || '',
+          'Tên sách': sach.TenSach || '',
+          'Tác giả': sach.TacGia || '',
+          'Thể loại': sach.TheLoai || '',
+          'Nhà XB': sach.MaNXB || '',
+          'Năm XB': sach.NamXuatBan || '',
+          'Số quyển': sach.SoQuyen || 0,
+          'Đơn giá': sach.DonGia ? new Intl.NumberFormat('vi-VN').format(sach.DonGia) + ' VNĐ' : ''
+        }))
+
+        const worksheet = XLSX.utils.json_to_sheet(excelData)
+        const workbook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách sách")
+
+        worksheet['!cols'] = [
+          { wch: 6 }, { wch: 12 }, { wch: 40 }, { wch: 20 }, { wch: 15 },
+          { wch: 12 }, { wch: 10 }, { wch: 12 }, { wch: 15 }
+        ]
+
+        XLSX.writeFile(workbook, `danh-sach-sach-${new Date().toISOString().split('T')[0]}.xlsx`)
+        
+        btn.innerHTML = '<i class="fas fa-check me-1"></i>Xuất thành công!'
+        setTimeout(() => {
+          btn.innerHTML = originalText
+          btn.disabled = false
+        }, 2000)
+        
+      } catch (error) {
+        console.error('EXCEL ERROR:', error)
+        alert('Lỗi xuất Excel: ' + error.message)
+        btn.innerHTML = originalText
+        btn.disabled = false
+      }
+    },
+
     async retrieveBooks() {
       this.books = await SachService.getAll();
     },
@@ -230,6 +354,10 @@ export default {
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 .book-card:hover {
   transform: scale(1.02);
