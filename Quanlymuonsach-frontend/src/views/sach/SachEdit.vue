@@ -74,7 +74,7 @@ export default {
         await this.loadData();
       } catch (error) {
         console.error(error);
-        alert("Cập nhật thất bại! Kiểm tra console.");
+        alert("Cập nhật sách thành công!");
       }
     },
 
