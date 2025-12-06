@@ -10,16 +10,12 @@
 
     <div v-if="phieu && !loading" class="card shadow p-4 mt-3">
       <div class="d-flex gap-2">
-        <button class="btn btn-success" v-if="!phieu.TrangThai" @click="traSach">
-          Trả sách
-        </button>
-
-        <button class="btn btn-danger" @click="xoaPhieu">
-          Xóa phiếu
+        <button class="btn btn-success" v-if="phieu.TrangThai === 1" @click="traSach">
+          <i class="fas fa-book-reader me-1"></i> Trả sách
         </button>
 
         <router-link class="btn btn-secondary" :to="{ name: 'muonsach.list' }">
-          Quay lại
+          <i class="fas fa-arrow-left me-1"></i> Quay lại
         </router-link>
       </div>
     </div>
@@ -35,7 +31,6 @@ import DetailCard from "@/components/DetailCard.vue";
 export default {
   components: { DetailCard },
   props: ["id"],
-
   data() {
     return {
       phieu: null,
@@ -43,7 +38,6 @@ export default {
       error: null,
     };
   },
-
   computed: {
     formattedPhieu() {
       if (!this.phieu) return {};
@@ -56,12 +50,12 @@ export default {
         SoLuong: this.phieu.SoLuong,
         NgayMuon: this.phieu.NgayMuon,
         HanTra: this.phieu.HanTra,
-        TrangThai: this.phieu.TrangThai ? "Đã trả" : "Chưa trả",
-        GhiChu: this.phieu.GhiChu,
+        TrangThai: this.phieu.TrangThai === 0 ? "Chờ duyệt" :
+                   this.phieu.TrangThai === 1 ? "Đang mượn" :
+                   "Đã trả",
       };
     },
   },
-
   async mounted() {
     try {
       this.phieu = await TheoDoiMuonSachService.get(this.id);
@@ -71,46 +65,18 @@ export default {
       this.loading = false;
     }
   },
-
   methods: {
     async traSach() {
-  if (!confirm("Xác nhận trả sách?")) return;
-
-  try {
-    await TheoDoiMuonSachService.update(this.id, {
-      TrangThai: true,
-      GhiChu: "Đã trả sách",
-    });
-  } catch (err) {
-    console.warn("Lỗi backend nhưng vẫn xử lý thành công:", err);
-  }
-
-  this.phieu.TrangThai = true;
-  this.phieu.GhiChu = "Đã trả sách";
-
-  alert("Trả sách thành công!");
-},
-
-   async xoaPhieu() {
-  if (!confirm("Bạn có chắc muốn xóa phiếu này?")) return;
-
-  try {
-    await TheoDoiMuonSachService.delete(this.id);
-
-    alert("Xóa phiếu mượn thành công!");
-  } catch (err) {
-    const status = err?.response?.status;
-
-    if (status === 204 || status === 404) {
-      alert("Xóa phiếu mượn thành công!");
-    } else {
-      alert("Lỗi khi xóa phiếu!"); 
-    }
-  }
-
-  this.$router.push({ name: "muonsach.list" });
-}
-
+      if (!confirm("Xác nhận trả sách?")) return;
+      try {
+        await TheoDoiMuonSachService.traSach(this.id);
+        this.phieu.TrangThai = 2;
+        alert("Trả sách thành công!");
+      } catch (err) {
+        console.error(err);
+        alert("Trả sách thất bại!");
+      }
+    },
   },
 };
 </script>
