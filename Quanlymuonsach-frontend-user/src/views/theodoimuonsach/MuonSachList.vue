@@ -29,26 +29,36 @@
             <tr v-for="p in phieuMuon" :key="p._id" class="table-row">
               <td class="text-center fw-semibold">{{ p.MaPhieuMuon }}</td>
               <td class="text-center">{{ p.MaSach }}</td>
-              <td class="text-center">{{ p.NgayMuon }}</td>
-              <td class="text-center">{{ p.HanTra }}</td>
+              <td class="text-center">{{ p.NgayMuon || "-" }}</td>
+              <td class="text-center">{{ p.HanTra || "-" }}</td>
 
               <td class="text-center">
                 <span
                   class="badge px-3 py-2 rounded-pill"
-                  :class="p.TrangThai ? 'bg-success' : 'bg-warning text-dark'"
+                  :class="statusClass(p.TrangThai)"
                 >
-                  <i :class="p.TrangThai ? 'fas fa-check-circle me-1' : 'fas fa-clock me-1'"></i>
-                  {{ p.TrangThai ? "Đã trả" : "Chưa trả" }}
+                  <i :class="statusIcon(p.TrangThai)"></i>
+                  {{ statusText(p.TrangThai) }}
                 </span>
               </td>
 
               <td class="text-center">
-                <router-link
-                  :to="{ name: 'muonsach.detail', params: { id: p._id } }"
-                  class="btn btn-primary btn-sm px-3 rounded-pill"
-                >
-                  <i class="fas fa-eye me-1"></i> Xem
-                </router-link>
+                <div class="d-flex justify-content-center gap-2">
+                  <router-link
+                    :to="{ name: 'muonsach.detail', params: { id: p._id } }"
+                    class="btn btn-primary btn-sm px-3 rounded-pill"
+                  >
+                    <i class="fas fa-eye me-1"></i> Xem
+                  </router-link>
+
+                  <button
+                    v-if="p.TrangThai === 1"
+                    @click="traSach(p._id)"
+                    class="btn btn-warning btn-sm px-3 rounded-pill"
+                  >
+                    <i class="fas fa-book-reader me-1"></i> Trả
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -66,8 +76,12 @@
                     Đã trả: {{ daTra }}
                   </span>
                   <span class="fw-bold text-warning">
-                    <i class="fas fa-clock me-1"></i>
-                    Chưa trả: {{ chuaTra }}
+                    <i class="fas fa-book-reader me-1"></i>
+                    Đang mượn: {{ dangMuon }}
+                  </span>
+                  <span class="fw-bold text-secondary">
+                    <i class="fas fa-hourglass-half me-1"></i>
+                    Chờ duyệt: {{ choDuyet }}
                   </span>
                 </div>
               </th>
@@ -92,10 +106,52 @@ export default {
 
   computed: {
     daTra() {
-      return this.phieuMuon.filter(p => p.TrangThai === true).length;
+      return this.phieuMuon.filter(p => p.TrangThai === 2).length;
     },
-    chuaTra() {
-      return this.phieuMuon.filter(p => p.TrangThai === false).length;
+    dangMuon() {
+      return this.phieuMuon.filter(p => p.TrangThai === 1).length;
+    },
+    choDuyet() {
+      return this.phieuMuon.filter(p => p.TrangThai === 0).length;
+    },
+  },
+
+  methods: {
+    statusText(trangThai) {
+      switch(trangThai) {
+        case 0: return "Chờ duyệt";
+        case 1: return "Đang mượn";
+        case 2: return "Đã trả";
+        default: return "-";
+      }
+    },
+    statusClass(trangThai) {
+      switch(trangThai) {
+        case 0: return "bg-secondary text-white";
+        case 1: return "bg-warning text-dark";
+        case 2: return "bg-success";
+        default: return "";
+      }
+    },
+    statusIcon(trangThai) {
+      switch(trangThai) {
+        case 0: return "fas fa-hourglass-half me-1";
+        case 1: return "fas fa-book-reader me-1";
+        case 2: return "fas fa-check-circle me-1";
+        default: return "";
+      }
+    },
+
+    async traSach(id) {
+      try {
+        const updated = await TheoDoiMuonSachService.traSach(id);
+        const index = this.phieuMuon.findIndex(p => p._id === id);
+        if (index !== -1) this.phieuMuon[index] = updated;
+        this.$toast?.success("Trả sách thành công!");
+      } catch (error) {
+        console.error(error);
+        this.$toast?.error(error.message || "Trả sách thất bại");
+      }
     },
   },
 

@@ -6,86 +6,132 @@ class TheodoimuonsachService {
     this.Sach = client.db().collection("sach");
   }
 
+  static TRANG_THAI = {
+    CHO_DUYET: 0,
+    DANG_MUON: 1,
+    DA_TRA: 2,
+  };
+
+  static getTenTrangThai(trangThai) {
+    const map = {
+      0: "Chờ duyệt",
+      1: "Đang mượn",
+      2: "Đã trả",
+    };
+    return map[trangThai] || "Không xác định";
+  }
+
   extractData(payload) {
     const record = {
-      MaPhieuMuon: payload.MaPhieuMuon,
-      MaDocGia: payload.MaDocGia,
-      TenDocGia: payload.TenDocGia,
-      MaSach: payload.MaSach,
-      TenSach: payload.TenSach,
-      SoLuong: payload.SoLuong,
-      NgayMuon: payload.NgayMuon,
-      HanTra: payload.HanTra,
-      NgayTra: payload.NgayTra,
-      TrangThai: payload.TrangThai ?? false,
-      GhiChu: payload.GhiChu,
+      MaPhieuMuon: payload.MaPhieuMuon?.trim(),
+      MaDocGia: payload.MaDocGia?.trim(),
+      TenDocGia: payload.TenDocGia?.trim(),
+      MaSach: payload.MaSach?.trim(),
+      TenSach: payload.TenSach?.trim(),
+      SoLuong: payload.SoLuong ? Number(payload.SoLuong) : 1,
+      NgayMuon: payload.NgayMuon ? new Date(payload.NgayMuon) : null,
+      HanTra: payload.HanTra ? new Date(payload.HanTra) : null,
+      NgayTra: payload.NgayTra ? new Date(payload.NgayTra) : null,
+      TrangThai:
+        payload.TrangThai !== undefined
+          ? Number(payload.TrangThai)
+          : this.constructor.TRANG_THAI.CHO_DUYET,
+      GhiChu: payload.GhiChu?.trim() || "",
+      DaTruKho: false,
     };
 
-    Object.keys(record).forEach(
-      (key) => record[key] === undefined && delete record[key]
-    );
+    Object.keys(record).forEach((key) => {
+      if (record[key] === undefined || record[key] === "") delete record[key];
+    });
 
     return record;
   }
 
-  async traSach(id) {
-    try {
-      const phieuMuon = await this.Theodoimuonsach.findOne({
-        _id: new ObjectId(id)
-      });
-
-      if (!phieuMuon) {
-        throw new Error("Không tìm thấy phiếu mượn");
-      }
-
-      if (phieuMuon.TrangThai === true) {
-        throw new Error("Phiếu mượn đã được trả rồi");
-      }
-
-      const now = new Date();
-      const updatePhieu = await this.Theodoimuonsach.findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        { 
-          $set: { 
-            TrangThai: true,
-            NgayTra: now,
-            GhiChu: phieuMuon.GhiChu || "Đã trả"
-          } 
-        },
-        { returnDocument: "after" }
-      );
-
-      await this.Sach.findOneAndUpdate(
-        { MaSach: phieuMuon.MaSach },
-        { $inc: { SoQuyen: phieuMuon.SoLuong } },
-        { upsert: true }
-      );
-
-      return {
-        message: "Trả sách thành công!",
-        phieuMuon: updatePhieu.value,
-        soLuongTra: phieuMuon.SoLuong
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async create(payload) {
     const record = this.extractData(payload);
+    const sach = await this.Sach.findOne({ MaSach: record.MaSach });
+    if (!sach || sach.SoQuyen < record.SoLuong) {
+      throw new Error("Sách không đủ số lượng để mượn");
+    }
+
+    await this.Sach.updateOne(
+      { MaSach: record.MaSach },
+      { $inc: { SoQuyen: -record.SoLuong } }
+    );
+    record.DaTruKho = true;
+
     const result = await this.Theodoimuonsach.insertOne(record);
     return { _id: result.insertedId, ...record };
   }
 
-  async find(filter) {
-    const cursor = await this.Theodoimuonsach.find(filter);
-    return await cursor.toArray();
+  async duyetPhieuMuon(id) {
+    const phieu = await this.findById(id);
+    if (!phieu) throw new Error("Không tìm thấy phiếu mượn");
+    if (phieu.TrangThai !== this.constructor.TRANG_THAI.CHO_DUYET) {
+      throw new Error("Chỉ được duyệt phiếu đang ở trạng thái 'Chờ duyệt'");
+    }
+
+    const now = new Date();
+    const updated = await this.Theodoimuonsach.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          TrangThai: this.constructor.TRANG_THAI.DANG_MUON,
+          NgayMuon: now,
+          GhiChu: phieu.GhiChu
+            ? `${phieu.GhiChu} | Duyệt: ${now.toLocaleString()}`
+            : `Duyệt lúc ${now.toLocaleString()}`,
+        },
+      },
+      { returnDocument: "after" }
+    );
+
+    return {
+      message: "Duyệt phiếu mượn thành công!",
+      phieuMuon: updated.value,
+    };
+  }
+
+  async traSach(id) {
+    const phieu = await this.findById(id);
+    if (!phieu) throw new Error("Không tìm thấy phiếu mượn");
+    if (phieu.TrangThai !== this.constructor.TRANG_THAI.DANG_MUON) {
+      throw new Error("Chỉ được trả sách khi đang ở trạng thái 'Đang mượn'");
+    }
+
+    const now = new Date();
+    const updated = await this.Theodoimuonsach.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          TrangThai: this.constructor.TRANG_THAI.DA_TRA,
+          NgayTra: now,
+          GhiChu: phieu.GhiChu
+            ? `${phieu.GhiChu} | Trả: ${now.toLocaleString()}`
+            : `Đã trả lúc ${now.toLocaleString()}`,
+        },
+      },
+      { returnDocument: "after" }
+    );
+
+    await this.Sach.updateOne(
+      { MaSach: phieu.MaSach },
+      { $inc: { SoQuyen: +phieu.SoLuong } }
+    );
+
+    return {
+      message: "Trả sách thành công!",
+      phieuMuon: updated.value,
+      soLuongTra: phieu.SoLuong,
+    };
+  }
+
+  async find(filter = {}) {
+    return await this.Theodoimuonsach.find(filter).sort({ NgayMuon: -1 }).toArray();
   }
 
   async findById(id) {
-    return await this.Theodoimuonsach.findOne({
-      _id: new ObjectId(id)
-    });
+    return await this.Theodoimuonsach.findOne({ _id: new ObjectId(id) });
   }
 
   async update(id, payload) {
@@ -100,9 +146,17 @@ class TheodoimuonsachService {
   }
 
   async delete(id) {
-    const result = await this.Theodoimuonsach.findOneAndDelete({
-      _id: new ObjectId(id)
-    });
+    const phieu = await this.findById(id);
+    if (!phieu) return null;
+
+    if (phieu.DaTruKho && phieu.TrangThai === this.constructor.TRANG_THAI.CHO_DUYET) {
+      await this.Sach.updateOne(
+        { MaSach: phieu.MaSach },
+        { $inc: { SoQuyen: +phieu.SoLuong } }
+      );
+    }
+
+    const result = await this.Theodoimuonsach.findOneAndDelete({ _id: new ObjectId(id) });
     return result.value;
   }
 

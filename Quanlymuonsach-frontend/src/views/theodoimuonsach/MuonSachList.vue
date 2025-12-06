@@ -38,6 +38,7 @@
                 <th class="text-center">Ngày Mượn</th>
                 <th class="text-center">Hạn Trả</th>
                 <th class="text-center">Trạng Thái</th>
+                <th class="text-center">Thao tác</th>
               </tr>
             </thead>
 
@@ -54,22 +55,39 @@
                 <td class="text-center">
                   <span
                     class="badge px-3 py-2 rounded-pill"
-                    :class="p.TrangThai ? 'bg-success' : 'bg-warning text-dark'"
+                    :class="statusClass(p.TrangThai)"
                   >
-                    <i 
-                      :class="p.TrangThai ? 'fas fa-check-circle me-1' : 'fas fa-clock me-1'"
-                    ></i>
-                    {{ p.TrangThai ? "Đã trả" : "Chưa trả" }}
+                    <i :class="statusIcon(p.TrangThai)"></i>
+                    {{ statusText(p.TrangThai) }}
                   </span>
+                </td>
+
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-2">
+                    <router-link
+                      :to="{ name: 'muonsach.detail', params: { id: p._id } }"
+                      class="btn btn-primary btn-sm px-3 rounded-pill"
+                    >
+                      <i class="fas fa-eye me-1"></i> Xem
+                    </router-link>
+
+                    <button
+                      v-if="p.TrangThai === 0"
+                      @click="duyetPhieu(p._id)"
+                      class="btn btn-success btn-sm px-3 rounded-pill"
+                    >
+                      <i class="fas fa-check-circle me-1"></i> Duyệt
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
 
             <tfoot class="bg-light">
               <tr>
-                <th colspan="8" class="text-center py-4">
+                <th colspan="9" class="text-center py-4">
                   <div class="row g-4">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                       <div class="card bg-primary text-white">
                         <div class="card-body text-center">
                           <i class="fas fa-list fs-1 opacity-75"></i>
@@ -78,7 +96,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                       <div class="card bg-success text-white">
                         <div class="card-body text-center">
                           <i class="fas fa-check-circle fs-1 opacity-75"></i>
@@ -87,12 +105,21 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                       <div class="card bg-warning text-dark">
                         <div class="card-body text-center">
-                          <i class="fas fa-clock fs-1 opacity-75"></i>
-                          <h4 class="fw-bold">{{ chuaTra }}</h4>
-                          <small>Chưa trả</small>
+                          <i class="fas fa-book-reader fs-1 opacity-75"></i>
+                          <h4 class="fw-bold">{{ dangMuon }}</h4>
+                          <small>Đang mượn</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="card bg-secondary text-white">
+                        <div class="card-body text-center">
+                          <i class="fas fa-hourglass-half fs-1 opacity-75"></i>
+                          <h4 class="fw-bold">{{ choDuyet }}</h4>
+                          <small>Chờ duyệt</small>
                         </div>
                       </div>
                     </div>
@@ -123,10 +150,13 @@ export default {
 
   computed: {
     daTra() {
-      return this.phieuMuon.filter(p => p.TrangThai === true).length;
+      return this.phieuMuon.filter(p => p.TrangThai === 2).length;
     },
-    chuaTra() {
-      return this.phieuMuon.filter(p => p.TrangThai === false).length;
+    dangMuon() {
+      return this.phieuMuon.filter(p => p.TrangThai === 1).length;
+    },
+    choDuyet() {
+      return this.phieuMuon.filter(p => p.TrangThai === 0).length;
     },
     filteredPhieuMuon() {
       if (!this.searchText) return this.phieuMuon;
@@ -145,142 +175,45 @@ export default {
       return dateString ? new Date(dateString).toLocaleDateString('vi-VN') : '';
     },
 
-    async exportToPDF(event) {
-      if (this.phieuMuon.length === 0) {
-        alert('Không có phiếu mượn để xuất!')
-        return
+    statusText(trangThai) {
+      switch(trangThai) {
+        case 0: return "Chờ duyệt";
+        case 1: return "Đang mượn";
+        case 2: return "Đã trả";
+        default: return "-";
       }
-
-      const btn = event.target
-      const originalText = btn.innerHTML
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xuất...'
-      btn.disabled = true
-
-      try {
-        const { jsPDF } = await import('jspdf')
-        const jsPDFAutoTable = await import('jspdf-autotable')
-        const { default: autoTable } = jsPDFAutoTable
-
-        const doc = new jsPDF('l', 'mm', 'a4')
-
-        doc.setFontSize(22)
-        doc.setFont("times", "bold")
-        doc.text('📋 DANH SÁCH PHIẾU MƯỢN SÁCH', 105, 25, { align: 'center' })
-        
-        doc.setFontSize(12)
-        doc.setFont("times", "normal")
-        doc.text(`Ngày xuất: ${new Date().toLocaleDateString('vi-VN')}`, 105, 35, { align: 'center' })
-        doc.text(`Tổng: ${this.phieuMuon.length} phiếu | Đã trả: ${this.daTra} | Chưa trả: ${this.chuaTra}`, 105, 45, { align: 'center' })
-
-        const cols = ['STT', 'Mã Phiếu', 'Độc giả', 'Mã Sách', 'Tên sách', 'Ngày mượn', 'Hạn trả', 'Trạng thái']
-        const rows = this.phieuMuon.map((p, i) => [
-          i + 1,
-          p.MaPhieuMuon || '',
-          p.TenDocGia || '',
-          p.MaSach || '',
-          p.TenSach || '',
-          this.formatDate(p.NgayMuon),
-          this.formatDate(p.HanTra),
-          p.TrangThai ? 'Đã trả' : 'Chưa trả'
-        ])
-
-        autoTable(doc, {
-          head: [cols],
-          body: rows,
-          startY: 55,
-          styles: { 
-            font: 'times',
-            fontSize: 8, 
-            cellPadding: 4,
-            halign: 'center',
-            valign: 'middle'
-          },
-          headStyles: { 
-            font: 'times',
-            fillColor: [46, 204, 113], 
-            textColor: 255, 
-            fontStyle: 'bold',
-            fontSize: 9
-          },
-          alternateRowStyles: { fillColor: [248, 250, 252] },
-          columnStyles: {
-            0: { cellWidth: 12 },
-            1: { cellWidth: 20 },
-            2: { cellWidth: 30 },
-            3: { cellWidth: 18 },
-            4: { cellWidth: 40 },
-            5: { cellWidth: 20 },
-            6: { cellWidth: 20 },
-            7: { cellWidth: 18 }
-          },
-          margin: { left: 15, right: 15 }
-        })
-
-        const filename = `phieu-muon-${new Date().toISOString().split('T')[0]}.pdf`
-        doc.save(filename)
-        
-        btn.innerHTML = '<i class="fas fa-check me-1"></i>Xuất thành công!'
-        setTimeout(() => {
-          btn.innerHTML = originalText
-          btn.disabled = false
-        }, 2000)
-        
-      } catch (error) {
-        console.error('PDF ERROR:', error)
-        alert('Lỗi xuất PDF: ' + error.message)
-        btn.innerHTML = originalText
-        btn.disabled = false
+    },
+    statusClass(trangThai) {
+      switch(trangThai) {
+        case 0: return "bg-secondary text-white";
+        case 1: return "bg-warning text-dark";
+        case 2: return "bg-success";
+        default: return "";
+      }
+    },
+    statusIcon(trangThai) {
+      switch(trangThai) {
+        case 0: return "fas fa-hourglass-half me-1";
+        case 1: return "fas fa-book-reader me-1";
+        case 2: return "fas fa-check-circle me-1";
+        default: return "";
       }
     },
 
-    async exportToExcel(event) {
-      if (this.phieuMuon.length === 0) {
-        alert('Không có phiếu mượn để xuất!')
-        return
-      }
-
-      const btn = event.target
-      const originalText = btn.innerHTML
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang xuất...'
-      btn.disabled = true
-
+    async duyetPhieu(id) {
       try {
-        const excelData = this.phieuMuon.map((p, index) => ({
-          'STT': index + 1,
-          'Mã Phiếu': p.MaPhieuMuon || '',
-          'Độc giả': p.TenDocGia || '',
-          'Mã Sách': p.MaSach || '',
-          'Tên sách': p.TenSach || '',
-          'Ngày mượn': this.formatDate(p.NgayMuon),
-          'Hạn trả': this.formatDate(p.HanTra),
-          'Trạng thái': p.TrangThai ? 'Đã trả' : 'Chưa trả'
-        }))
-
-        const worksheet = XLSX.utils.json_to_sheet(excelData)
-        const workbook = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Phiếu mượn sách")
-
-        worksheet['!cols'] = [
-          { wch: 6 }, { wch: 15 }, { wch: 25 }, { wch: 12 }, { wch: 40 },
-          { wch: 12 }, { wch: 12 }, { wch: 12 }
-        ]
-
-        XLSX.writeFile(workbook, `phieu-muon-${new Date().toISOString().split('T')[0]}.xlsx`)
-        
-        btn.innerHTML = '<i class="fas fa-check me-1"></i>Xuất thành công!'
-        setTimeout(() => {
-          btn.innerHTML = originalText
-          btn.disabled = false
-        }, 2000)
-        
+        const updated = await TheoDoiMuonSachService.duyetPhieu(id);
+        const index = this.phieuMuon.findIndex(p => p._id === id);
+        if (index !== -1) this.phieuMuon[index] = updated;
+        this.$toast?.success("Duyệt phiếu mượn thành công!");
       } catch (error) {
-        console.error('EXCEL ERROR:', error)
-        alert('Lỗi xuất Excel: ' + error.message)
-        btn.innerHTML = originalText
-        btn.disabled = false
+        console.error(error);
+        this.$toast?.error(error.message || "Duyệt phiếu thất bại");
       }
     },
 
+    async exportToPDF(event) { },
+    async exportToExcel(event) { },
     async refreshList() {
       this.phieuMuon = await TheoDoiMuonSachService.getAll();
     },

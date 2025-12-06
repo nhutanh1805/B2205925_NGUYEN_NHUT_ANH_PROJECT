@@ -25,9 +25,16 @@ class TheoDoiMuonSachService {
     return this.api.delete(`/${id}`).then(res => res.data);
   }
 
-  // lấy phiếu mượn của 1 user
   getByUser(MaDocGia) {
     return this.api.get(`/user/${MaDocGia}`).then(res => res.data);
+  }
+
+  duyetPhieu(id) {
+    return this.api.patch(`/${id}/duyet`).then(res => res.data.data);
+  }
+
+  traSach(id) {
+    return this.api.patch(`/${id}/tra`).then(res => res.data.phieuMuon);
   }
 }
 
