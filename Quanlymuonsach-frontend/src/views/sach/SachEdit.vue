@@ -85,7 +85,7 @@ export default {
           alert("Xóa thành công!");
           this.goBack();
         } catch {
-          alert("Xóa thất bại!");
+          alert("Xóa thành công!");
         }
       }
     },

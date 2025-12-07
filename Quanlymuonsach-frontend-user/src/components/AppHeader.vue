@@ -26,29 +26,9 @@
             <router-link class="nav-link" :to="{ name: 'phieumuon.list' }">Phiếu mượn</router-link>
           </li>
 
-          <template v-if="!user">
-            <li class="nav-item">
-              <router-link class="nav-link" to="/login">Đăng nhập</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/register">Đăng ký</router-link>
-            </li>
-          </template>
+          
 
-          <template v-else>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                {{ user.HoTen }}
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                  <button class="dropdown-item text-danger" @click="logout">
-                    Đăng xuất
-                  </button>
-                </li>
-              </ul>
-            </li>
-          </template>
+          
         </ul>
       </div>
     </div>
